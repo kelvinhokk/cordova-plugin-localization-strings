@@ -66,7 +66,7 @@ function writeLocalisationFieldsToXcodeProj(filePaths, groupname, proj) {
         var groupKey = proj.findPBXVariantGroupKey({name: groupname});
         if (!groupKey) {
             // findPBXVariantGroupKey with name InfoPlist.strings not found.  creating new group
-            var localizableStringVarGroup = proj.addLocalizationVariantGroup();
+            var localizableStringVarGroup = proj.addLocalizationVariantGroup(groupname);
             groupKey = localizableStringVarGroup.fileRef;
         }
 
@@ -74,7 +74,7 @@ function writeLocalisationFieldsToXcodeProj(filePaths, groupname, proj) {
             var results = _.filter(fileRefValues, {path: '"' + path + '"'});
             if (_.isArray(results) && results.length == 0) {
                 //not found in pbxFileReference yet
-                proj.addResourceFile(path, {variantGroup: true}, groupKey);
+                proj.addResourceFile("Resources/" + path, {variantGroup: true}, groupKey);
             }
         });
     }
@@ -104,14 +104,14 @@ module.exports = function(context) {
                     CFBundleName: langJson.APP_NAME
                 };
                 writeStringFile(plistString, lang.lang, "InfoPlist.strings");
-                infoPlistPaths.push("Resources/" + lang.lang + ".lproj/" + "InfoPlist.strings");
+                infoPlistPaths.push(lang.lang + ".lproj/" + "InfoPlist.strings");
             }
 
             //remove APP_NAME and write to Localizable.strings
             var localizableStringsJson = _.omit(langJson, "APP_NAME");
             if (!_.isEmpty(localizableStringsJson)) {
                 writeStringFile(localizableStringsJson, lang.lang, "Localizable.strings");
-                localizableStringsPaths.push("Resources/" + lang.lang + ".lproj/" + "Localizable.strings");
+                localizableStringsPaths.push(lang.lang + ".lproj/" + "Localizable.strings");
             }
         });
 
