@@ -7,10 +7,9 @@ This plugin also lets you localize your app name on both iOS and Android.
 ## Using
 
     
-Install the plugin
+Install the plugin by fetching the dependencies
 
-    $ cd hello
-    $ cordova plugin add https://github.com/kelvinhokk/cordova-plugin-localization-strings.git
+    $ cordova plugin add https://github.com/kelvinhokk/cordova-plugin-localization-strings.git --fetch
     
 
 Modify your project root to have the following structure:
