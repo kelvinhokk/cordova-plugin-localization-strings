@@ -22,6 +22,8 @@ module.exports = function(context) {
     getTargetLang(context)
         .then(function(languages) {
 
+            var promisesToRun = [];
+
             languages.forEach(function(lang){
 
                 //read the json file
@@ -38,7 +40,7 @@ module.exports = function(context) {
                             "string":[]
                         }
                     };
-                    processResult(context, lang.lang, langJson, stringXmlJson);
+                    promisesToRun.push(processResult(context, lang.lang, langJson, stringXmlJson));
                 }
                 else {
                     //lets read from strings.xml into json
@@ -55,11 +57,18 @@ module.exports = function(context) {
                                 };
                             }
 
-                            processResult(context, lang.lang, langJson, stringXmlJson);
+                            promisesToRun.push(processResult(context, lang.lang, langJson, stringXmlJson));
                         });
                     });
                 }
             });
+
+            return q.all(promisesToRun).then(function(){
+                deferred.resolve();
+            });
+        })
+        .catch(function(err){
+            throw err;
         });
 
     return deferred.promise;
@@ -127,6 +136,8 @@ function getLocalStringXmlPath(context, lang){
 // process the modified xml and put write to file
 function processResult(context, lang, langJson, stringXmlJson) {
     var path = context.requireCordovaModule('path');
+    var q = context.requireCordovaModule('q');
+    var deferred = q.defer();
 
     var mapObj = {};
     // create a map to the actual string
@@ -173,7 +184,11 @@ function processResult(context, lang, langJson, stringXmlJson) {
             fs.writeFile(filePath, buildXML(stringXmlJson), { encoding:'utf8' }, function(err) {
                 if(err) throw err;
                 console.log('Saved:' + filePath);
+                return deferred.resolve();
             });
+        }
+        else {
+            throw err;
         }
     });
 
@@ -184,5 +199,5 @@ function processResult(context, lang, langJson, stringXmlJson) {
         return x.toString();
     }
 
-
+    return deferred.promise;
 }
