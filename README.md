@@ -49,7 +49,7 @@ Run the code
 
 ## Dependencies
 
-This plugin depends on a fork on the node-xcode project, that is currently not in the master yet.
+This plugin relies on node-xcode > 0.9.0.
 
 ## Details (iOS)
 
