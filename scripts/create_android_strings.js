@@ -147,14 +147,7 @@ function processResult(context, lang, langJson, stringXmlJson) {
         }
     });
 
-    var langJsonToProcess;
-    if (_.has(langJson, "APP_NAME")) {
-        langJsonToProcess = _.omit(langJson, "APP_NAME");
-        langJsonToProcess.app_name = langJson.APP_NAME;
-    }
-    else {
-        langJsonToProcess = langJson;
-    }
+    var langJsonToProcess = _.assignIn(langJson.config_android, langJson.app);
 
     //now iterate through langJsonToProcess
     _.forEach(langJsonToProcess, function(val, key){

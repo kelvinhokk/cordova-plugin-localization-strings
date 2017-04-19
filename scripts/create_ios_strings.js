@@ -6,13 +6,13 @@ var iosProjFolder;
 var iosPbxProjPath;
 
 var getValue = function(config, name) {
-    var value = config.match(new RegExp('<' + name + '>(.*?)</' + name + '>', "i"))
+    var value = config.match(new RegExp('<' + name + '>(.*?)</' + name + '>', "i"));
     if(value && value[1]) {
         return value[1]
     } else {
         return null
     }
-}
+};
 
 function jsonToDotStrings(jsonObj){
     var returnString = "";
@@ -91,47 +91,49 @@ module.exports = function(context) {
     var infoPlistPaths = [];
 
     getTargetLang(context)
-    .then(function(languages) {
+        .then(function(languages) {
 
-        languages.forEach(function(lang){
+            languages.forEach(function(lang){
 
-            //read the json file
-            var langJson = require(lang.path);
-            if (_.has(langJson, "APP_NAME")) {
-                //do processing for appname into plist
-                var plistString = {
-                    CFBundleDisplayName: langJson.APP_NAME,
-                    CFBundleName: langJson.APP_NAME
-                };
-                writeStringFile(plistString, lang.lang, "InfoPlist.strings");
-                infoPlistPaths.push(lang.lang + ".lproj/" + "InfoPlist.strings");
-            }
+                //read the json file
+                var langJson = require(lang.path);
+                if (_.has(langJson, "config_ios")) {
+                    //do processing for appname into plist
+                    var plistString = langJson.config_ios;
+                    if (!_.isEmpty(plistString)) {
+                        writeStringFile(plistString, lang.lang, "InfoPlist.strings");
+                        infoPlistPaths.push(lang.lang + ".lproj/" + "InfoPlist.strings");
+                    }
+                }
 
-            //remove APP_NAME and write to Localizable.strings
-            var localizableStringsJson = _.omit(langJson, "APP_NAME");
-            if (!_.isEmpty(localizableStringsJson)) {
-                writeStringFile(localizableStringsJson, lang.lang, "Localizable.strings");
-                localizableStringsPaths.push(lang.lang + ".lproj/" + "Localizable.strings");
-            }
+                //remove APP_NAME and write to Localizable.strings
+                if (_.has(langJson, "app")) {
+                    //do processing for appname into plist
+                    var localizableStringsJson = langJson.app;
+                    if (!_.isEmpty(localizableStringsJson)) {
+                        writeStringFile(localizableStringsJson, lang.lang, "Localizable.strings");
+                        localizableStringsPaths.push(lang.lang + ".lproj/" + "Localizable.strings");
+                    }
+                }
+            });
+
+            var proj = xcode.project(getXcodePbxProjPath());
+
+            proj.parse(function (err) {
+                if (err) {
+                    deferred.reject(err);
+                }
+                else {
+
+                    writeLocalisationFieldsToXcodeProj(localizableStringsPaths, 'Localizable.strings', proj);
+                    writeLocalisationFieldsToXcodeProj(infoPlistPaths, 'InfoPlist.strings', proj);
+
+                    fs.writeFileSync(getXcodePbxProjPath(), proj.writeSync());
+                    console.log('new pbx project written with localization groups');
+                    deferred.resolve();
+                }
+            });
         });
-
-        var proj = xcode.project(getXcodePbxProjPath());
-
-        proj.parse(function (err) {
-            if (err) {
-                deferred.reject(err);
-            }
-            else {
-
-                writeLocalisationFieldsToXcodeProj(localizableStringsPaths, 'Localizable.strings', proj);
-                writeLocalisationFieldsToXcodeProj(infoPlistPaths, 'InfoPlist.strings', proj);
-
-                fs.writeFileSync(getXcodePbxProjPath(), proj.writeSync());
-                console.log('new pbx project written with localization groups');
-                deferred.resolve();
-            }
-        });
-    })
 
     return deferred.promise;
 };

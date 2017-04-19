@@ -27,13 +27,23 @@ Cordova Project Root
                 
 ```
 
-A JSON file may look like this
+A JSON file may look like this  (Note: Breaking change from 0.1.4 onwards - new JSON format).
 ```
 {
-  "APP_NAME": "Some App Name",
-  "HAVE_MAIL_TITLE": "You have mail.",
-  "HAVE_MAIL_MSG": "%1$@ has you a message titled \\\"%2$@\\\""
+  "config_ios" : {
+    "NSCameraUsageDescription": "Take pictures",
+    "CFBundleDisplayName": "Some App Name",
+    "CFBundleName": "Some App Name"
+  },
+  "config_android" : {
+    "app_name": "Some App Name"
+  },
+  "app" : {
+    "HAVE_MAIL_TITLE": "You have mail.",
+    "HAVE_MAIL_MSG": "%1$@ has you a message titled \\\"%2$@\\\""
+  }
 }
+
 
 ```
 
@@ -49,12 +59,14 @@ Run the code
 
 ## Dependencies
 
-This plugin relies on node-xcode > 0.9.0.
+This plugin relies on node-xcode >= 0.9.0.
+
+Do remember to install the other dependencies via the --fetch when installing the plugin.
 
 ## Details (iOS)
 
-The plugin reads the assumed directory structure.  If the json file contains the "APP_NAME" property,  the CFBundleDisplayName and CFBundleName properties in the InfoPlist.strings will be created and placed in the respective locale.lproj directory.   The rest of the strings will be placed in the Localizable.strings file and placed in the locale directory. 
+The plugin reads the assumed directory structure.  The plugin reads from all the fields in config_ios and writes into the InfoPlist.strings, which will be placed in the respective locale.lproj directory.   The rest of the strings in "app" will be placed in the Localizable.strings file and placed in the locale directory. 
 
 ## Details (Android)
 
-The plugin reads the assumed directory structure, and the app_name property will be updated, and the rest of the properties inserted in to the strings.xml of the locale's  /res/val-locale/strings.xml 
+The plugin reads the assumed directory structure, the plugin will combine all properties in "config_android" and "app", and inserted into the strings.xml of the locale's  /res/val-locale/strings.xml 
