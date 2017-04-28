@@ -38,6 +38,7 @@ function getTargetIosDir() {
 }
 
 function getXcodePbxProjPath() {
+    initIosDir();
     return iosPbxProjPath;
 }
 
