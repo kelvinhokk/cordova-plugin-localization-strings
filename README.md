@@ -4,7 +4,8 @@ This plugin helps you to manage string files that you need natively, namely on L
 
 This plugin also lets you localize your app name on both iOS and Android.
 
-## Using
+
+## How to Use
 
     
 Install the plugin by fetching the dependencies
@@ -62,6 +63,85 @@ Run the code
 This plugin relies on node-xcode >= 0.9.0.
 
 Do remember to install the other dependencies via the --fetch when installing the plugin.
+
+## Use Cases
+
+Typically in a Cordova application, localization is performed on the javascript layer.  There are several libraries to do help do so like angular-translate on ionic 1 and ngx-translate on ionic 2, with the help of plugins like cordova-plugin-globalization to retrieved the locale or preferred language natively.
+
+This plugin helps in native localization in the following use cases:
+
+### Localizing App Name
+
+The plugin will help to localize your app name if you require it to be named differently in different languages.  Use the following json file format.
+
+```
+{
+  "config_ios" : {
+    "CFBundleDisplayName": "Some App Name",
+    "CFBundleName": "Some App Name"
+  },
+  "config_android" : {
+    "app_name": "Some App Name"
+  }
+}
+
+```
+### Localizing iOS Permissions
+
+This plugin will help in localize the iOS permission descriptions, for example NSCameraUsageDescription.  A full list of iOS permissions and other infoPlist strings that can be found here. (https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html "CocoaKeys")
+
+Example usage:
+
+```
+{
+  "config_ios" : {
+    "NSCameraUsageDescription": "Take pictures",
+    "NSLocationUsageDescription": "Need Location for Some Purpose",
+  }
+}
+
+```
+
+### Push notifications messages 
+
+Typically, there are 2 main ways push notifications can be localised:
+* your app saves your user's selected language on the server, and pushes a localised string in the push notification to your user.
+* your server pushes a key to the phone, and the app displays a localised version based on the key in the localization bundle, as determined from the user's phone OS's languauge.
+
+This plugin helps in the latter approach.
+
+More information about the respective string localizations and formatting here:
+
+* Storing Localized Content in Your App Bundle (https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CreatingtheNotificationPayload.html#//apple_ref/doc/uid/TP40008194-CH10-SW9)
+* Formatting strings (https://developer.android.com/guide/topics/resources/string-resource.html#FormattingAndStyling)
+
+
+Example usage:
+
+```
+{
+  "app" : {
+    "HAVE_MAIL_TITLE": "You have mail.",
+    "HAVE_INVITE_MSG": "%1$@ has invited you to game room %2$@"
+  }
+}
+
+```
+
+The plugin will automatically generate Localizable.strings file using the following entry on iOS:
+```
+"HAVE_MAIL_TITLE" = "You have mail.";
+"HAVE_INVITE_MSG" = "%1$@ has invited you to game room %2$@";
+```
+
+And on Android, the respective locale's strings.xml:
+```
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<resources>
+    <string name="HAVE_MAIL_TITLE">You have mail.</string>
+    <string name="HAVE_INVITE_MSG">%1$s has invited you to game room %2$s</string>
+</resources>
+```
 
 ## Details (iOS)
 
