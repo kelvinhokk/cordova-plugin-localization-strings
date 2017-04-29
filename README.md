@@ -28,7 +28,7 @@ Cordova Project Root
                 
 ```
 
-A JSON file may look like this  (Note: Breaking change from 0.1.4 onwards - new JSON format).
+A JSON file may look like this  (Note: Breaking change from 1.0.0 onwards - new JSON format).
 ```
 {
   "config_ios" : {
