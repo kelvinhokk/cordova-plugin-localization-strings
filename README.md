@@ -60,7 +60,7 @@ Run the code
 
 ## Dependencies
 
-This plugin relies on node-xcode >= 0.9.0.
+This plugin relies on node-xcode >= 0.9.0, node >= 5.0.0, cordova >= 6.0.0.
 
 Do remember to install the other dependencies via the --fetch when installing the plugin.
 
