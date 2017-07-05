@@ -98,24 +98,41 @@ module.exports = function(context) {
 
                 //read the json file
                 var langJson = require(lang.path);
-                if (_.has(langJson, "config_ios")) {
-                    //do processing for appname into plist
-                    var plistString = langJson.config_ios;
-                    if (!_.isEmpty(plistString)) {
-                        writeStringFile(plistString, lang.lang, "InfoPlist.strings");
-                        infoPlistPaths.push(lang.lang + ".lproj/" + "InfoPlist.strings");
-                    }
+
+                // check the locales to write to
+                var localeLangs = [];
+                if (_.has(langJson, "locale") && _.has(langJson.locale, "ios")) {
+                    //iterate the locales to to be iterated.
+                    _.forEach(langJson.locale.ios, function(aLocale){
+                        localeLangs.push(aLocale);
+                    });
+                }
+                else {
+                    // use the default lang from the filename, for example "en" in en.json
+                    localeLangs.push(lang.lang);
                 }
 
-                //remove APP_NAME and write to Localizable.strings
-                if (_.has(langJson, "app")) {
-                    //do processing for appname into plist
-                    var localizableStringsJson = langJson.app;
-                    if (!_.isEmpty(localizableStringsJson)) {
-                        writeStringFile(localizableStringsJson, lang.lang, "Localizable.strings");
-                        localizableStringsPaths.push(lang.lang + ".lproj/" + "Localizable.strings");
+                _.forEach(localeLangs, function(localeLang){
+                    if (_.has(langJson, "config_ios")) {
+                        //do processing for appname into plist
+                        var plistString = langJson.config_ios;
+                        if (!_.isEmpty(plistString)) {
+                            writeStringFile(plistString, localeLang, "InfoPlist.strings");
+                            infoPlistPaths.push(localeLang + ".lproj/" + "InfoPlist.strings");
+                        }
                     }
-                }
+
+                    //remove APP_NAME and write to Localizable.strings
+                    if (_.has(langJson, "app")) {
+                        //do processing for appname into plist
+                        var localizableStringsJson = langJson.app;
+                        if (!_.isEmpty(localizableStringsJson)) {
+                            writeStringFile(localizableStringsJson, localeLang, "Localizable.strings");
+                            localizableStringsPaths.push(localeLang + ".lproj/" + "Localizable.strings");
+                        }
+                    }
+                });
+
             });
 
             var proj = xcode.project(getXcodePbxProjPath());

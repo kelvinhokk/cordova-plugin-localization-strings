@@ -23,7 +23,7 @@ Cordova Project Root
            |__ app
                 |
                 |__  en.json
-                |__  zh.json
+                |__  es.json
                 |__  ja.json
                 
 ```
@@ -47,7 +47,9 @@ A JSON file may look like this  (Note: Breaking change from 1.0.0 onwards - new 
 
 
 ```
+By default, the language for the Localizable.strings, InfoPlist.strings or strings.xml is taken from the filename.  
 
+For example, if the filename is es.json,  the language is hence "es", and the plugin will create "/Resources/es.lproj/Localizable.strings" or "/values-es/strings.xml".
 
 Install iOS or Android platform
 
@@ -57,6 +59,68 @@ Install iOS or Android platform
 Run the code
 
     cordova prepare ios 
+
+#### Platform Specific Localizations
+
+There are some platform specific localizations which differ for Android and iOS, for example for Android:
+- zh-rCN
+- zh-rHK
+- zh-rTW
+                                                   
+and for iOS:
+- zh-Hans
+- zh-Hans-CN
+- zh-Hant
+- zh-Hant-TW
+
+In this case, you can use the locale in the json file to specify the platform localizations as in the following examples.  
+
+N.B.  The "locale" key is optional (if platform localization is not required).
+
+zh-Hans.json
+```
+{
+	"locale": {
+		"ios": ["zh-Hans"],
+		"android": ["zh-rCN"]
+	},
+	"config_ios": {
+		"NSCameraUsageDescription": "扫描二维码",
+		"CFBundleDisplayName": "应用程序名称",
+		"CFBundleName": "应用程序名称"
+	},
+	"config_android": {
+		"app_name": "应用程序名称"
+	},
+	"app": {
+		"HAVE_MAIL_TITLE": "你收到了邮件",
+		"HAVE_MAIL_MSG": "％1$@给您发送了封邮件，标题为\\\"％2$@\\\""
+	}
+}
+
+```
+
+zh-Hant.json
+```
+{
+	"locale": {
+		"ios": ["zh-Hant"],
+		"android": ["zh-rTW", "zh-rHK"]
+	},
+	"config_ios": {
+		"NSCameraUsageDescription": "掃描二維碼",
+		"CFBundleDisplayName": "應用程序名稱",
+		"CFBundleName": "應用程序名稱"
+	},
+	"config_android": {
+		"app_name": "應用程序名稱"
+	},
+	"app": {
+		"HAVE_MAIL_TITLE": "你收到了郵件",
+		"HAVE_MAIL_MSG": "％1$@給您發送了封郵件，標題為\\\"％2$@\\\""
+	}
+}
+```
 
 ## Dependencies
 

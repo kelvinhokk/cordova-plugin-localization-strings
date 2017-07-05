@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-localization-strings",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Cordova Plugin for handling localization strings on InfoPlist.strings and Localizable.strings on iOS, strings.xml on Android",
   "repository": {
     "type": "git",

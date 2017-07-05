@@ -29,38 +29,55 @@ module.exports = function(context) {
                 //read the json file
                 var langJson = require(lang.path);
 
-                var stringXmlFilePath = getLocalStringXmlPath(context, lang.lang);
-                var parser = new xml2js.Parser();
-
-                var stringXmlJson;
-                if (! fileExists(stringXmlFilePath)) {
-                    //stringXmlJson
-                    stringXmlJson = {
-                        "resources": {
-                            "string":[]
-                        }
-                    };
-                    promisesToRun.push(processResult(context, lang.lang, langJson, stringXmlJson));
-                }
-                else {
-                    //lets read from strings.xml into json
-                    fs.readFile(stringXmlFilePath, { encoding:'utf8' }, function(err, data) {
-                        if(err) throw err;
-                        parser.parseString(data, function (err, result) {
-                            if(err) throw err;
-                            stringXmlJson = result;
-
-                            // initialize xmlJson to have strings
-                            if (!_.has(stringXmlJson, "resources") || !_.has(stringXmlJson.resources, "string")) {
-                                stringXmlJson.resources = {
-                                    "string":[]
-                                };
-                            }
-
-                            promisesToRun.push(processResult(context, lang.lang, langJson, stringXmlJson));
-                        });
+                // check the locales to write to
+                var localeLangs = [];
+                if (_.has(langJson, "locale") && _.has(langJson.locale, "android")) {
+                    //iterate the locales to to be iterated.
+                    _.forEach(langJson.locale.android, function(aLocale){
+                        localeLangs.push(aLocale);
                     });
                 }
+                else {
+                    // use the default lang from the filename, for example "en" in en.json
+                    localeLangs.push(lang.lang);
+                }
+
+                _.forEach(localeLangs, function(localeLang){
+                    var stringXmlFilePath = getLocalStringXmlPath(context, localeLang);
+                    var parser = new xml2js.Parser();
+
+                    var stringXmlJson;
+                    if (! fileExists(stringXmlFilePath)) {
+                        //stringXmlJson
+                        stringXmlJson = {
+                            "resources": {
+                                "string":[]
+                            }
+                        };
+                        promisesToRun.push(processResult(context, localeLang, langJson, stringXmlJson));
+                    }
+                    else {
+                        //lets read from strings.xml into json
+                        fs.readFile(stringXmlFilePath, { encoding:'utf8' }, function(err, data) {
+                            if(err) throw err;
+                            parser.parseString(data, function (err, result) {
+                                if(err) throw err;
+                                stringXmlJson = result;
+
+                                // initialize xmlJson to have strings
+                                if (!_.has(stringXmlJson, "resources") || !_.has(stringXmlJson.resources, "string")) {
+                                    stringXmlJson.resources = {
+                                        "string":[]
+                                    };
+                                }
+
+                                promisesToRun.push(processResult(context, localeLang, langJson, stringXmlJson));
+                            });
+                        });
+                    }
+                });
+
+
             });
 
             return q.all(promisesToRun).then(function(){
