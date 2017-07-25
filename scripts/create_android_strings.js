@@ -85,7 +85,7 @@ module.exports = function(context) {
             });
         })
         .catch(function(err){
-            throw err;
+            deferred.reject(err);
         });
 
     return deferred.promise;
