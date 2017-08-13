@@ -13,11 +13,8 @@ function fileExists(path) {
 
 module.exports = function(context) {
 
-    var path = context.requireCordovaModule('path');
     var q = context.requireCordovaModule('q');
     var deferred = q.defer();
-    var glob = context.requireCordovaModule('glob');
-    var xcode = require('xcode');
 
     getTargetLang(context)
         .then(function(languages) {
