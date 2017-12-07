@@ -72,8 +72,10 @@ function writeLocalisationFieldsToXcodeProj(filePaths, groupname, proj) {
         }
 
         filePaths.forEach(function (path) {
-            var results = _.filter(fileRefValues, {path: '"' + path + '"'});
-            if (_.isArray(results) && results.length == 0) {
+            var results = _.find(fileRefValues, function(o){
+                return  (_.isObject(o) && _.has(o, "path") && o.path.replace(/['"]+/g, '') == path)
+            });
+            if (_.isUndefined(results)) {
                 //not found in pbxFileReference yet
                 proj.addResourceFile("Resources/" + path, {variantGroup: true}, groupKey);
             }
