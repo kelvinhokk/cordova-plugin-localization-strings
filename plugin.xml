@@ -10,6 +10,8 @@
     <engine name="cordova" version=">=6.0.0"/>
   </engines>
 
+  <preference name="TRANSLATION_PATH" default="translations/app/" />
+
   <hook src="scripts/create_strings.js" type="after_prepare" />
 
 </plugin>
