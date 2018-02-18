@@ -10,13 +10,7 @@
     <engine name="cordova" version=">=6.0.0"/>
   </engines>
 
-  <platform name="ios">
-    <hook src="scripts/create_ios_strings.js" type="after_prepare" />
-  </platform>
-
-  <platform name="android">
-    <hook src="scripts/create_android_strings.js" type="after_prepare" />
-  </platform>
+  <hook src="scripts/create_strings.js" type="after_prepare" />
 
 
 </plugin>
