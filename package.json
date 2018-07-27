@@ -30,7 +30,8 @@
     "lodash": "^4.17.2",
     "xcode": "^0.9.0",
     "xml-writer": "^1.6.0",
-    "xml2js": "^0.4.17"
+    "xml2js": "^0.4.17",
+    "xmldom": "^0.1.27"
   },
   "devDependencies": {},
   "license": "MIT",

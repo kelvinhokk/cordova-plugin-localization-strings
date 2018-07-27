@@ -1,18 +1,15 @@
 var fs = require('fs-extra');
 var _ = require('lodash');
 var iconv = require('iconv-lite');
+var xmldom = require('xmldom');
 
 var iosProjFolder;
 var iosPbxProjPath;
 
-var getValue = function(config, name) {
-    var value = config.match(new RegExp('<' + name + '>(.*?)</' + name + '>', "i"));
-    if(value && value[1]) {
-        return value[1]
-    } else {
-        return null
-    }
-};
+var getValue = function(configDoc, name) {
+    var name = configDoc.getElementsByTagName(name)[0];    
+    return name.textContent
+}
 
 function jsonToDotStrings(jsonObj){
     var returnString = "";
@@ -25,7 +22,8 @@ function jsonToDotStrings(jsonObj){
 function initIosDir(){
     if (!iosProjFolder || !iosPbxProjPath) {
         var config = fs.readFileSync("config.xml").toString();
-        var name = getValue(config, "name");
+        var configDoc = (new xmldom.DOMParser()).parseFromString(config, 'application/xml');
+        var name = getValue(configDoc, "name");
 
         iosProjFolder =  "platforms/ios/" + name;
         iosPbxProjPath = "platforms/ios/" + name + ".xcodeproj/project.pbxproj";
