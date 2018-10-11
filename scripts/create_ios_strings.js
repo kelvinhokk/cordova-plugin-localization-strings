@@ -47,7 +47,8 @@ function writeStringFile(plistStringJsonObj, lang, fileName) {
     fs.ensureDir(lProjPath, function (err) {
         if (!err) {
             var stringToWrite = jsonToDotStrings(plistStringJsonObj);
-            var buffer = iconv.encode(stringToWrite, 'utf16');
+            // changed to utf-8 since well, ios 10:)
+            var buffer = iconv.encode(stringToWrite, 'utf8');
 
             fs.open(lProjPath + "/" + fileName, 'w', function(err, fd) {
                 if(err) throw err;
