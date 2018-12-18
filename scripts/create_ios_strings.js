@@ -125,9 +125,9 @@ module.exports = function(context) {
                     }
 
                     //remove APP_NAME and write to Localizable.strings
-                    if (_.has(langJson, "app")) {
+                    if (_.has(langJson, "app_ios")) {
                         //do processing for appname into plist
-                        var localizableStringsJson = langJson.app;
+                        var localizableStringsJson = langJson.app_ios;
                         if (!_.isEmpty(localizableStringsJson)) {
                             writeStringFile(localizableStringsJson, localeLang, "Localizable.strings");
                             localizableStringsPaths.push(localeLang + ".lproj/" + "Localizable.strings");
