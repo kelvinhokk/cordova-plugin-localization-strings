@@ -10,7 +10,7 @@ This plugin also lets you localize your app name on both iOS and Android.
     
 Install the plugin by fetching the dependencies
 
-    $ cordova plugin add https://github.com/kelvinhokk/cordova-plugin-localization-strings.git --fetch
+    $ cordova plugin add https://github.com/kelvinhokk/cordova-plugin-localization-strings.git --save
     
 
 Modify your project root to have the following structure:
@@ -29,20 +29,20 @@ Cordova Project Root
 ```
 
 A JSON file may look like this  (Note: Breaking change from 1.0.0 onwards - new JSON format).
-```
+```json
 {
-  "config_ios" : {
-    "NSCameraUsageDescription": "Take pictures",
-    "CFBundleDisplayName": "Some App Name",
-    "CFBundleName": "Some App Name"
-  },
-  "config_android" : {
-    "app_name": "Some App Name"
-  },
-  "app" : {
-    "HAVE_MAIL_TITLE": "You have mail.",
-    "HAVE_MAIL_MSG": "%1$@ has you a message titled \\\"%2$@\\\""
-  }
+	"config_ios" : {
+		"NSCameraUsageDescription": "Take pictures",
+		"CFBundleDisplayName": "Some App Name",
+		"CFBundleName": "Some App Name"
+	},
+	"config_android" : {
+		"app_name": "Some App Name"
+	},
+	"app" : {
+		"HAVE_MAIL_TITLE": "You have mail.",
+		"HAVE_MAIL_MSG": "%1$@ has you a message titled \\\"%2$@\\\""
+	}
 }
 
 
@@ -78,7 +78,7 @@ In this case, you can use the locale in the json file to specify the platform lo
 N.B.  The "locale" key is optional (if platform localization is not required).
 
 zh-Hans.json
-```
+```json
 {
 	"locale": {
 		"ios": ["zh-Hans"],
@@ -101,7 +101,7 @@ zh-Hans.json
 ```
 
 zh-Hant.json
-```
+```json
 {
 	"locale": {
 		"ios": ["zh-Hant"],
@@ -138,15 +138,15 @@ This plugin helps in native localization in the following use cases:
 
 The plugin will help to localize your app name if you require it to be named differently in different languages.  Use the following json file format.
 
-```
+```json
 {
-  "config_ios" : {
-    "CFBundleDisplayName": "Some App Name",
-    "CFBundleName": "Some App Name"
-  },
-  "config_android" : {
-    "app_name": "Some App Name"
-  }
+	"config_ios" : {
+		"CFBundleDisplayName": "Some App Name",
+		"CFBundleName": "Some App Name"
+	},
+	"config_android" : {
+		"app_name": "Some App Name"
+	}
 }
 
 ```
@@ -156,12 +156,12 @@ This plugin will help in localize the iOS permission descriptions, for example N
 
 Example usage:
 
-```
+```json
 {
-  "config_ios" : {
-    "NSCameraUsageDescription": "Take pictures",
-    "NSLocationUsageDescription": "Need Location for Some Purpose",
-  }
+	"config_ios" : {
+		"NSCameraUsageDescription": "Take pictures",
+		"NSLocationUsageDescription": "Need Location for Some Purpose",
+	}
 }
 
 ```
@@ -182,12 +182,12 @@ More information about the respective string localizations and formatting here:
 
 Example usage:
 
-```
+```json
 {
-  "app" : {
-    "HAVE_MAIL_TITLE": "You have mail.",
-    "HAVE_INVITE_MSG": "%1$@ has invited you to game room %2$@"
-  }
+	"app" : {
+		"HAVE_MAIL_TITLE": "You have mail.",
+		"HAVE_INVITE_MSG": "%1$@ has invited you to game room %2$@"
+	}
 }
 
 ```
@@ -199,7 +199,7 @@ The plugin will automatically generate Localizable.strings file using the follow
 ```
 
 And on Android, the respective locale's strings.xml:
-```
+```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <resources>
     <string name="HAVE_MAIL_TITLE">You have mail.</string>

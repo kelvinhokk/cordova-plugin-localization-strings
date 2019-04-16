@@ -47,7 +47,7 @@ function writeStringFile(plistStringJsonObj, lang, fileName) {
     fs.ensureDir(lProjPath, function (err) {
         if (!err) {
             var stringToWrite = jsonToDotStrings(plistStringJsonObj);
-            var buffer = iconv.encode(stringToWrite, 'utf16');
+            var buffer = iconv.encode(stringToWrite, 'utf8');
 
             fs.open(lProjPath + "/" + fileName, 'w', function(err, fd) {
                 if(err) throw err;
@@ -83,10 +83,10 @@ function writeLocalisationFieldsToXcodeProj(filePaths, groupname, proj) {
     }
 }
 module.exports = function(context) {
-    var path = context.requireCordovaModule('path');
-    var q = context.requireCordovaModule('q');
+    var path = require('path');
+    var q = require('q');
     var deferred = q.defer();
-    var glob = context.requireCordovaModule('glob');
+    var glob = require('glob');
     var xcode = require('xcode');
 
     var localizableStringsPaths = [];
@@ -187,9 +187,9 @@ function getDefaultPath(context){
 
 function getTargetLang(context) {
     var targetLangArr = [];
-    var deferred = context.requireCordovaModule('q').defer();
-    var path = context.requireCordovaModule('path');
-    var glob = context.requireCordovaModule('glob');
+    var deferred = require('q').defer();
+    var path = require('path');
+    var glob = require('glob');
     var providedTranslationPathPattern;
     var providedTranslationPathRegex;
     var configNodes = context.opts.plugin.pluginInfo._et._root._children;
