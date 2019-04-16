@@ -83,11 +83,31 @@ module.exports = function (context) {
     return deferred.promise;
 };
 
+function getTranslationPath (config, name) {
+    var value = config.match(new RegExp('name="' + name + '" value="(.*?)"', "i"))
+
+    if(value && value[1]) {
+        return value[1];
+
+    } else {
+        return null;
+    }
+}
+
+function getDefaultPath(context){
+    var configNodes = context.opts.plugin.pluginInfo._et._root._children;
+    var defaultTranslationPath = '';
+
+    for (var node in configNodes) {
+        if (configNodes[node].attrib.name == 'TRANSLATION_PATH') {
+            defaultTranslationPath = configNodes[node].attrib.default;
+        }
+    }
+    return defaultTranslationPath;
+}
+
 function getTargetLang(context) {
     var targetLangArr = [];
-    var deferred = require('q').defer();
-    var path = require('path');
-    var glob = require('glob');
 
     glob("translations/app/*.json", function (err, langFiles) {
         if (err) {
@@ -104,9 +124,52 @@ function getTargetLang(context) {
                 }
             });
             deferred.resolve(targetLangArr);
-        }
-    });
 
+    var deferred = require('q').defer();
+    var path = require('path');
+    var glob = require('glob');
+    var providedTranslationPathPattern;
+    var providedTranslationPathRegex;
+    var configNodes = context.opts.plugin.pluginInfo._et._root._children;
+    var config = fs.readFileSync("config.xml").toString();  
+    var PATH = getTranslationPath(config, "TRANSLATION_PATH");
+
+    if(PATH == null){
+        PATH = getDefaultPath(context);
+        providedTranslationPathPattern = PATH + "*.json";
+        providedTranslationPathRegex = new RegExp((PATH + "(.*).json"));
+    }
+    if(PATH != null){
+        if(/^\s*$/.test(PATH)){
+            providedTranslationPathPattern = getDefaultPath(context);
+            providedTranslationPathPattern = PATH + "*.json";
+            providedTranslationPathRegex = new RegExp((PATH + "(.*).json"));
+        }
+        else {
+            providedTranslationPathPattern = PATH + "*.json";
+            providedTranslationPathRegex = new RegExp((PATH + "(.*).json"));
+        }
+    }
+    glob(providedTranslationPathPattern,    
+        function(err, langFiles) {
+            if(err) {
+                deferred.reject(err);
+            }
+            else {
+
+                langFiles.forEach(function(langFile) {
+                    var matches = langFile.match(providedTranslationPathRegex);
+                    if (matches) {
+                        targetLangArr.push({
+                            lang: matches[1],
+                            path: path.join(context.opts.projectRoot, langFile)
+                        });
+                    }
+                });
+                deferred.resolve(targetLangArr);
+            }
+        }
+    );
     return deferred.promise;
 }
 
