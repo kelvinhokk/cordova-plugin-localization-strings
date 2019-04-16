@@ -186,14 +186,10 @@ function getDefaultPath(context){
 
 function getTargetLang(context) {
     var targetLangArr = [];
-<<<<<<< HEAD
+
     var deferred = require('q').defer();
     var path = require('path');
     var glob = require('glob');
-=======
-    var deferred = context.requireCordovaModule('q').defer();
-    var path = context.requireCordovaModule('path');
-    var glob = context.requireCordovaModule('glob');
     var providedTranslationPathPattern;
     var providedTranslationPathRegex;
     var configNodes = context.opts.plugin.pluginInfo._et._root._children;
@@ -216,7 +212,6 @@ function getTargetLang(context) {
             providedTranslationPathRegex = new RegExp((PATH + "(.*).json"));
         }
     }
->>>>>>> 2114382... Allow optional path since /translations/ in root is kind of weird and you will likely have strings in multiple locations in your codebase.
 
     glob(providedTranslationPathPattern,    
         function(err, langFiles) {
