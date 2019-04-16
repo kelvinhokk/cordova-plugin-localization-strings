@@ -11,7 +11,7 @@ function fileExists(path) {
 }
 
 module.exports = function (context) {
-    var q = context.requireCordovaModule('q');
+    var q = require('q');
     var deferred = q.defer();
 
     getTargetLang(context).then(function (languages) {
@@ -83,11 +83,31 @@ module.exports = function (context) {
     return deferred.promise;
 };
 
+function getTranslationPath (config, name) {
+    var value = config.match(new RegExp('name="' + name + '" value="(.*?)"', "i"))
+
+    if(value && value[1]) {
+        return value[1];
+
+    } else {
+        return null;
+    }
+}
+
+function getDefaultPath(context){
+    var configNodes = context.opts.plugin.pluginInfo._et._root._children;
+    var defaultTranslationPath = '';
+
+    for (var node in configNodes) {
+        if (configNodes[node].attrib.name == 'TRANSLATION_PATH') {
+            defaultTranslationPath = configNodes[node].attrib.default;
+        }
+    }
+    return defaultTranslationPath;
+}
+
 function getTargetLang(context) {
     var targetLangArr = [];
-    var deferred = context.requireCordovaModule('q').defer();
-    var path = context.requireCordovaModule('path');
-    var glob = context.requireCordovaModule('glob');
 
     glob("translations/app/*.json", function (err, langFiles) {
         if (err) {
@@ -104,14 +124,57 @@ function getTargetLang(context) {
                 }
             });
             deferred.resolve(targetLangArr);
-        }
-    });
 
+    var deferred = require('q').defer();
+    var path = require('path');
+    var glob = require('glob');
+    var providedTranslationPathPattern;
+    var providedTranslationPathRegex;
+    var configNodes = context.opts.plugin.pluginInfo._et._root._children;
+    var config = fs.readFileSync("config.xml").toString();  
+    var PATH = getTranslationPath(config, "TRANSLATION_PATH");
+
+    if(PATH == null){
+        PATH = getDefaultPath(context);
+        providedTranslationPathPattern = PATH + "*.json";
+        providedTranslationPathRegex = new RegExp((PATH + "(.*).json"));
+    }
+    if(PATH != null){
+        if(/^\s*$/.test(PATH)){
+            providedTranslationPathPattern = getDefaultPath(context);
+            providedTranslationPathPattern = PATH + "*.json";
+            providedTranslationPathRegex = new RegExp((PATH + "(.*).json"));
+        }
+        else {
+            providedTranslationPathPattern = PATH + "*.json";
+            providedTranslationPathRegex = new RegExp((PATH + "(.*).json"));
+        }
+    }
+    glob(providedTranslationPathPattern,    
+        function(err, langFiles) {
+            if(err) {
+                deferred.reject(err);
+            }
+            else {
+
+                langFiles.forEach(function(langFile) {
+                    var matches = langFile.match(providedTranslationPathRegex);
+                    if (matches) {
+                        targetLangArr.push({
+                            lang: matches[1],
+                            path: path.join(context.opts.projectRoot, langFile)
+                        });
+                    }
+                });
+                deferred.resolve(targetLangArr);
+            }
+        }
+    );
     return deferred.promise;
 }
 
 function getLocalizationDir(context, lang) {
-    var path = context.requireCordovaModule('path');
+    var path = require('path');
 
     var langDir;
     switch (lang) {
@@ -126,7 +189,7 @@ function getLocalizationDir(context, lang) {
 }
 
 function getLocalStringXmlPath(context, lang) {
-    var path = context.requireCordovaModule('path');
+    var path = require('path');
 
     var filePath;
     switch (lang) {
@@ -141,7 +204,7 @@ function getLocalStringXmlPath(context, lang) {
 }
 
 function getResPath(context) {
-    var path = context.requireCordovaModule('path');
+    var path = require('path');
     var locations = context.requireCordovaModule('cordova-lib/src/platforms/platforms').getPlatformApi('android').locations;
 
     if (locations && locations.res) {
@@ -153,8 +216,8 @@ function getResPath(context) {
 
 // process the modified xml and put write to file
 function processResult(context, lang, langJson, stringXmlJson) {
-    var path = context.requireCordovaModule('path');
-    var q = context.requireCordovaModule('q');
+    var path = require('path');
+    var q = require('q');
     var deferred = q.defer();
 
     var mapObj = {};
@@ -171,6 +234,7 @@ function processResult(context, lang, langJson, stringXmlJson) {
     _.forEach(langJsonToProcess, function (val, key) {
         // positional string format is in Mac OS X format.  change to android format
         val = val.replace(/\$@/gi, "$s");
+        val = val.replace(/\'/gi, "\\'");
 
         if (_.has(mapObj, key)) {
             // mapObj contains key. replace key
