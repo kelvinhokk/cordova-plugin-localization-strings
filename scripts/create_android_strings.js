@@ -109,22 +109,6 @@ function getDefaultPath(context){
 function getTargetLang(context) {
     var targetLangArr = [];
 
-    glob("translations/app/*.json", function (err, langFiles) {
-        if (err) {
-            deferred.reject(err);
-        } else {
-            langFiles.forEach(function (langFile) {
-                var matches = langFile.match(/translations\/app\/(.*).json/);
-
-                if (matches) {
-                    targetLangArr.push({
-                        lang: matches[1],
-                        path: path.join(context.opts.projectRoot, langFile)
-                    });
-                }
-            });
-            deferred.resolve(targetLangArr);
-
     var deferred = require('q').defer();
     var path = require('path');
     var glob = require('glob');
