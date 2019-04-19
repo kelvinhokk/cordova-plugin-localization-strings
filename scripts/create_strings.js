@@ -3,7 +3,7 @@ var android_script = require('./create_android_strings');
 
 module.exports = function(context) {
     var Q = require('q');
-    var platforms = context.requireCordovaModule('cordova-lib/src/cordova/util').listPlatforms(context.opts.projectRoot);
+    var platforms = context.opts.platforms;
 
     var promises = [];
 
