@@ -212,7 +212,7 @@ function processResult(context, lang, langJson, stringXmlJson) {
         }
     });
 
-    var langJsonToProcess = _.assignIn(langJson.config_android, langJson.app);
+    var langJsonToProcess = _.assignIn(langJson.config_android, langJson.app, langJson.app_android);
 
     //now iterate through langJsonToProcess
     _.forEach(langJsonToProcess, function (val, key) {
