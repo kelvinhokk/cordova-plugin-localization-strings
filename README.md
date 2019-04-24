@@ -214,3 +214,23 @@ The plugin reads the assumed directory structure.  The plugin reads from all the
 ## Details (Android)
 
 The plugin reads the assumed directory structure, the plugin will combine all properties in "config_android" and "app", and inserted into the strings.xml of the locale's  /res/val-locale/strings.xml 
+
+
+## Override platform specific translations:
+```json
+{
+    "app": {
+        "HAVE_MAIL_TITLE": "Sie haben Post. This should be overwritten by platform-specific string.",
+        "HAVE_MAIL_MSG": "%1$@ has you a message titled \\\"%2$@\\\""
+    },
+    "app_ios": {
+        "HAVE_MAIL_TITLE": "Sie haben Post in iOS.",
+        "Key with Spaces": "Schlüssel mit Leerzeichen"
+    },
+    "app_android": {
+        "HAVE_MAIL_TITLE": "Sie haben Post in Android.",
+        "ONLY_ON_ANDROID": "Testmeldung nur unter Android."
+    }
+}
+```
+(if `app_ios` or `app_android` are detected they will be used and override keys from `app`)
