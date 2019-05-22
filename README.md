@@ -1,4 +1,6 @@
 # Cordova Localization String Plugin
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fkelvinhokk%2Fcordova-plugin-localization-strings.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fkelvinhokk%2Fcordova-plugin-localization-strings?ref=badge_shield)
+
 
 This plugin helps you to manage string files that you need natively, namely on Localizable.strings and InfoPlist.strings on iOS, and strings.xml on Android.
 
@@ -234,3 +236,7 @@ The plugin reads the assumed directory structure, the plugin will combine all pr
 }
 ```
 (if `app_ios` or `app_android` are detected they will be used and override keys from `app`)
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fkelvinhokk%2Fcordova-plugin-localization-strings.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fkelvinhokk%2Fcordova-plugin-localization-strings?ref=badge_large)
