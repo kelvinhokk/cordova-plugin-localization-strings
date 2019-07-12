@@ -141,7 +141,7 @@ module.exports = function(context) {
             return new Promise(function (resolve, reject) {
               proj.parse(function (error) {
                   if (error) {
-                    return reject(error);
+                    reject(error);
                   }
 
                   writeLocalisationFieldsToXcodeProj(localizableStringsPaths, 'Localizable.strings', proj);
@@ -149,7 +149,7 @@ module.exports = function(context) {
 
                   fs.writeFileSync(getXcodePbxProjPath(), proj.writeSync());
                   console.log('new pbx project written with localization groups');
-                  return resolve();
+                  resolve();
               });
             });
         });
@@ -210,7 +210,7 @@ function getTargetLang(context) {
     return new Promise(function (resolve, reject) {
       glob(providedTranslationPathPattern, function(error, langFiles) {
         if (error) {
-          return reject(error);
+          reject(error);
         }
         langFiles.forEach(function(langFile) {
           var matches = langFile.match(providedTranslationPathRegex);
@@ -221,7 +221,7 @@ function getTargetLang(context) {
             });
           }
         });
-        return resolve(targetLangArr);
+        resolve(targetLangArr);
       });
     });
 }

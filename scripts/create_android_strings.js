@@ -126,7 +126,7 @@ function getTargetLang(context) {
     return new Promise(function(resolve, reject) {
       glob(providedTranslationPathPattern, function(error, langFiles) {
         if (error) {
-          return reject(error);
+          reject(error);
         }
         langFiles.forEach(function(langFile) {
           var matches = langFile.match(providedTranslationPathRegex);
@@ -220,16 +220,16 @@ function processResult(context, lang, langJson, stringXmlJson) {
     return new Promise(function(resolve, reject) {
       fs.ensureDir(langDir, function (error) {
         if (error) {
-          return reject(error);
+          reject(error);
         }
 
         fs.writeFile(filePath, buildXML(stringXmlJson), {encoding: 'utf8'}, function (error) {
             if (error) {
-              return reject(error);
+              reject(error);
             }
 
             console.log('Saved:' + filePath);
-            return resolve();
+            resolve();
         });
       });
     })
