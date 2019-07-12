@@ -11,10 +11,7 @@ function fileExists(path) {
 }
 
 module.exports = function (context) {
-    var q = require('q');
-    var deferred = q.defer();
-
-    getTargetLang(context).then(function (languages) {
+    return getTargetLang(context).then(function (languages) {
         var promisesToRun = [];
 
         languages.forEach(function (lang) {
@@ -73,14 +70,8 @@ module.exports = function (context) {
             });
         });
 
-        return q.all(promisesToRun).then(function () {
-            deferred.resolve();
-        });
-    }).catch(function (err) {
-        deferred.reject(err);
+        return Promise.all(promisesToRun);
     });
-
-    return deferred.promise;
 };
 
 function getTranslationPath (config, name) {
@@ -109,13 +100,11 @@ function getDefaultPath(context){
 function getTargetLang(context) {
     var targetLangArr = [];
 
-    var deferred = require('q').defer();
     var path = require('path');
     var glob = require('glob');
     var providedTranslationPathPattern;
     var providedTranslationPathRegex;
-    var configNodes = context.opts.plugin.pluginInfo._et._root._children;
-    var config = fs.readFileSync("config.xml").toString();  
+    var config = fs.readFileSync("config.xml").toString();
     var PATH = getTranslationPath(config, "TRANSLATION_PATH");
 
     if(PATH == null){
@@ -134,27 +123,23 @@ function getTargetLang(context) {
             providedTranslationPathRegex = new RegExp((PATH + "(.*).json"));
         }
     }
-    glob(providedTranslationPathPattern,    
-        function(err, langFiles) {
-            if(err) {
-                deferred.reject(err);
-            }
-            else {
-
-                langFiles.forEach(function(langFile) {
-                    var matches = langFile.match(providedTranslationPathRegex);
-                    if (matches) {
-                        targetLangArr.push({
-                            lang: matches[1],
-                            path: path.join(context.opts.projectRoot, langFile)
-                        });
-                    }
-                });
-                deferred.resolve(targetLangArr);
-            }
+    return new Promise(function(resolve, reject) {
+      glob(providedTranslationPathPattern, function(error, langFiles) {
+        if (error) {
+          return reject(error);
         }
-    );
-    return deferred.promise;
+        langFiles.forEach(function(langFile) {
+          var matches = langFile.match(providedTranslationPathRegex);
+          if (matches) {
+            targetLangArr.push({
+              lang: matches[1],
+              path: path.join(contect.opts.projectRoot, langFile)
+            });
+          }
+        });
+        resolve(targetLangArr);
+      })
+    });
 }
 
 function getLocalizationDir(context, lang) {
@@ -200,10 +185,6 @@ function getResPath(context) {
 
 // process the modified xml and put write to file
 function processResult(context, lang, langJson, stringXmlJson) {
-    var path = require('path');
-    var q = require('q');
-    var deferred = q.defer();
-
     var mapObj = {};
     // create a map to the actual string
     _.forEach(stringXmlJson.resources.string, function (val) {
@@ -236,17 +217,22 @@ function processResult(context, lang, langJson, stringXmlJson) {
     var langDir = getLocalizationDir(context, lang);
     var filePath = getLocalStringXmlPath(context, lang);
 
-    fs.ensureDir(langDir, function (err) {
-        if (err) {
-            throw err;
+    return new Promise(function(resolve, reject) {
+      fs.ensureDir(langDir, function (error) {
+        if (error) {
+          return reject(error);
         }
 
-        fs.writeFile(filePath, buildXML(stringXmlJson), {encoding: 'utf8'}, function (err) {
-            if (err) throw err;
+        fs.writeFile(filePath, buildXML(stringXmlJson), {encoding: 'utf8'}, function (error) {
+            if (error) {
+              return reject(error);
+            }
+
             console.log('Saved:' + filePath);
-            return deferred.resolve();
+            return resolve();
         });
-    });
+      });
+    })
 
     function buildXML(obj) {
         var builder = new xml2js.Builder();
@@ -255,6 +241,4 @@ function processResult(context, lang, langJson, stringXmlJson) {
         var x = builder.buildObject(obj);
         return x.toString();
     }
-
-    return deferred.promise;
 }

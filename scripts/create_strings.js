@@ -2,7 +2,6 @@ var ios_script = require('./create_ios_strings');
 var android_script = require('./create_android_strings');
 
 module.exports = function(context) {
-    var Q = require('q');
     var platforms = context.opts.platforms;
 
     var promises = [];
@@ -15,5 +14,5 @@ module.exports = function(context) {
         promises.push(android_script(context));
     }
 
-    return Q.all(promises);
+    return Promise.all(promises);
 };

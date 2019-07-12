@@ -7,7 +7,7 @@ var iosProjFolder;
 var iosPbxProjPath;
 
 var getValue = function(configDoc, name) {
-    var name = configDoc.getElementsByTagName(name)[0];    
+    var name = configDoc.getElementsByTagName(name)[0];
     return name.textContent
 }
 
@@ -81,17 +81,12 @@ function writeLocalisationFieldsToXcodeProj(filePaths, groupname, proj) {
     }
 }
 module.exports = function(context) {
-
-    var path = require('path');
-    var q = require('q');
-    var deferred = q.defer();
-    var glob = require('glob');
     var xcode = require('xcode');
 
     var localizableStringsPaths = [];
     var infoPlistPaths = [];
 
-    getTargetLang(context)
+    return getTargetLang(context)
         .then(function(languages) {
 
             languages.forEach(function(lang){
@@ -143,26 +138,21 @@ module.exports = function(context) {
 
             var proj = xcode.project(getXcodePbxProjPath());
 
-            proj.parse(function (err) {
-                if (err) {
-                    deferred.reject(err);
-                }
-                else {
+            return new Promise(function (resolve, reject) {
+              proj.parse(function (error) {
+                  if (error) {
+                    return reject(error);
+                  }
 
-                    writeLocalisationFieldsToXcodeProj(localizableStringsPaths, 'Localizable.strings', proj);
-                    writeLocalisationFieldsToXcodeProj(infoPlistPaths, 'InfoPlist.strings', proj);
+                  writeLocalisationFieldsToXcodeProj(localizableStringsPaths, 'Localizable.strings', proj);
+                  writeLocalisationFieldsToXcodeProj(infoPlistPaths, 'InfoPlist.strings', proj);
 
-                    fs.writeFileSync(getXcodePbxProjPath(), proj.writeSync());
-                    console.log('new pbx project written with localization groups');
-                    deferred.resolve();
-                }
+                  fs.writeFileSync(getXcodePbxProjPath(), proj.writeSync());
+                  console.log('new pbx project written with localization groups');
+                  return resolve();
+              });
             });
-        })
-        .catch(function(err){
-            deferred.reject(err);
         });
-
-    return deferred.promise;
 };
 
 
@@ -193,12 +183,10 @@ function getDefaultPath(context){
 function getTargetLang(context) {
     var targetLangArr = [];
 
-    var deferred = require('q').defer();
     var path = require('path');
     var glob = require('glob');
     var providedTranslationPathPattern;
     var providedTranslationPathRegex;
-    var configNodes = context.opts.plugin.pluginInfo._et._root._children;
     var config = fs.readFileSync("config.xml").toString();  
     var PATH = getTranslationPath(config, "TRANSLATION_PATH");
 
@@ -219,26 +207,22 @@ function getTargetLang(context) {
         }
     }
 
-    glob(providedTranslationPathPattern,    
-        function(err, langFiles) {
-            if(err) {
-                deferred.reject(err);
-            }
-            else {
-
-                langFiles.forEach(function(langFile) {
-                    var matches = langFile.match(providedTranslationPathRegex);
-                    if (matches) {
-                        targetLangArr.push({
-                            lang: matches[1],
-                            path: path.join(context.opts.projectRoot, langFile)
-                        });
-                    }
-                });
-                deferred.resolve(targetLangArr);
-            }
+    return new Promise(function (resolve, reject) {
+      glob(providedTranslationPathPattern, function(error, langFiles) {
+        if (error) {
+          return reject(error);
         }
-    );
-    return deferred.promise;
+        langFiles.forEach(function(langFile) {
+          var matches = langFile.match(providedTranslationPathRegex);
+          if (matches) {
+            targetLangArr.push({
+              lang: matches[1],
+              path: path.join(context.opts.projectRoot, langFile);
+            });
+          }
+        });
+        return resolve(targetLangArr);
+      });
+    });
 }
 
