@@ -217,7 +217,7 @@ function getTargetLang(context) {
           if (matches) {
             targetLangArr.push({
               lang: matches[1],
-              path: path.join(context.opts.projectRoot, langFile);
+              path: path.join(context.opts.projectRoot, langFile)
             });
           }
         });
