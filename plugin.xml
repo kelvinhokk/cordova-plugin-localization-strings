@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-        id="cordova-plugin-localization-strings" version="2.0.0">
+        id="cordova-plugin-localization-strings" version="3.1.0">
   <name>Localization</name>
   <description>Cordova Plugin for localizing local strings</description>
   <license>MIT License</license>
@@ -9,6 +9,8 @@
   <engines>
     <engine name="cordova" version=">=6.0.0"/>
   </engines>
+
+  <preference name="TRANSLATION_PATH" default="translations/app/" />
 
   <hook src="scripts/create_strings.js" type="after_prepare" />
 

@@ -1,18 +1,15 @@
 var fs = require('fs-extra');
 var _ = require('lodash');
 var iconv = require('iconv-lite');
+var xmldom = require('xmldom');
 
 var iosProjFolder;
 var iosPbxProjPath;
 
-var getValue = function(config, name) {
-    var value = config.match(new RegExp('<' + name + '>(.*?)</' + name + '>', "i"));
-    if(value && value[1]) {
-        return value[1]
-    } else {
-        return null
-    }
-};
+var getValue = function(configDoc, name) {
+    var name = configDoc.getElementsByTagName(name)[0];
+    return name.textContent
+}
 
 function jsonToDotStrings(jsonObj){
     var returnString = "";
@@ -25,7 +22,8 @@ function jsonToDotStrings(jsonObj){
 function initIosDir(){
     if (!iosProjFolder || !iosPbxProjPath) {
         var config = fs.readFileSync("config.xml").toString();
-        var name = getValue(config, "name");
+        var configDoc = (new xmldom.DOMParser()).parseFromString(config, 'application/xml');
+        var name = getValue(configDoc, "name");
 
         iosProjFolder =  "platforms/ios/" + name;
         iosPbxProjPath = "platforms/ios/" + name + ".xcodeproj/project.pbxproj";
@@ -47,7 +45,7 @@ function writeStringFile(plistStringJsonObj, lang, fileName) {
     fs.ensureDir(lProjPath, function (err) {
         if (!err) {
             var stringToWrite = jsonToDotStrings(plistStringJsonObj);
-            var buffer = iconv.encode(stringToWrite, 'utf16');
+            var buffer = iconv.encode(stringToWrite, 'utf8');
 
             fs.open(lProjPath + "/" + fileName, 'w', function(err, fd) {
                 if(err) throw err;
@@ -83,17 +81,12 @@ function writeLocalisationFieldsToXcodeProj(filePaths, groupname, proj) {
     }
 }
 module.exports = function(context) {
-
-    var path = context.requireCordovaModule('path');
-    var q = context.requireCordovaModule('q');
-    var deferred = q.defer();
-    var glob = context.requireCordovaModule('glob');
     var xcode = require('xcode');
 
     var localizableStringsPaths = [];
     var infoPlistPaths = [];
 
-    getTargetLang(context)
+    return getTargetLang(context)
         .then(function(languages) {
 
             languages.forEach(function(lang){
@@ -128,6 +121,12 @@ module.exports = function(context) {
                     if (_.has(langJson, "app")) {
                         //do processing for appname into plist
                         var localizableStringsJson = langJson.app;
+                        
+                        //ios specific strings
+                        if (_.has(langJson, "app_ios")){
+                            Object.assign(localizableStringsJson, langJson.app_ios);
+                        }
+                        
                         if (!_.isEmpty(localizableStringsJson)) {
                             writeStringFile(localizableStringsJson, localeLang, "Localizable.strings");
                             localizableStringsPaths.push(localeLang + ".lproj/" + "Localizable.strings");
@@ -139,54 +138,91 @@ module.exports = function(context) {
 
             var proj = xcode.project(getXcodePbxProjPath());
 
-            proj.parse(function (err) {
-                if (err) {
-                    deferred.reject(err);
-                }
-                else {
+            return new Promise(function (resolve, reject) {
+              proj.parse(function (error) {
+                  if (error) {
+                    reject(error);
+                  }
 
-                    writeLocalisationFieldsToXcodeProj(localizableStringsPaths, 'Localizable.strings', proj);
-                    writeLocalisationFieldsToXcodeProj(infoPlistPaths, 'InfoPlist.strings', proj);
+                  writeLocalisationFieldsToXcodeProj(localizableStringsPaths, 'Localizable.strings', proj);
+                  writeLocalisationFieldsToXcodeProj(infoPlistPaths, 'InfoPlist.strings', proj);
 
-                    fs.writeFileSync(getXcodePbxProjPath(), proj.writeSync());
-                    console.log('new pbx project written with localization groups');
-                    deferred.resolve();
-                }
+                  fs.writeFileSync(getXcodePbxProjPath(), proj.writeSync());
+                  console.log('new pbx project written with localization groups');
+                  resolve();
+              });
             });
-        })
-        .catch(function(err){
-            deferred.reject(err);
         });
-
-    return deferred.promise;
 };
+
+
+function getTranslationPath (config, name) {
+    var value = config.match(new RegExp('name="' + name + '" value="(.*?)"', "i"))
+
+    if(value && value[1]) {
+        return value[1];
+
+    } else {
+        return null;
+    }
+}
+
+function getDefaultPath(context){
+    var configNodes = context.opts.plugin.pluginInfo._et._root._children;
+    var defaultTranslationPath = '';
+
+    for (var node in configNodes) {
+        if (configNodes[node].attrib.name == 'TRANSLATION_PATH') {
+            defaultTranslationPath = configNodes[node].attrib.default;
+        }
+    }
+    return defaultTranslationPath;
+}
+
 
 function getTargetLang(context) {
     var targetLangArr = [];
-    var deferred = context.requireCordovaModule('q').defer();
-    var path = context.requireCordovaModule('path');
-    var glob = context.requireCordovaModule('glob');
 
-    glob("translations/app/*.json",
-        function(err, langFiles) {
-            if(err) {
-                deferred.reject(err);
-            }
-            else {
+    var path = require('path');
+    var glob = require('glob');
+    var providedTranslationPathPattern;
+    var providedTranslationPathRegex;
+    var config = fs.readFileSync("config.xml").toString();  
+    var PATH = getTranslationPath(config, "TRANSLATION_PATH");
 
-                langFiles.forEach(function(langFile) {
-                    var matches = langFile.match(/translations\/app\/(.*).json/);
-                    if (matches) {
-                        targetLangArr.push({
-                            lang: matches[1],
-                            path: path.join(context.opts.projectRoot, langFile)
-                        });
-                    }
-                });
-                deferred.resolve(targetLangArr);
-            }
+    if(PATH == null){
+        PATH = getDefaultPath(context);
+        providedTranslationPathPattern = PATH + "*.json";
+        providedTranslationPathRegex = new RegExp((PATH + "(.*).json"));
+    }
+    if(PATH != null){
+        if(/^\s*$/.test(PATH)){
+            providedTranslationPathPattern = getDefaultPath(context);
+            providedTranslationPathPattern = PATH + "*.json";
+            providedTranslationPathRegex = new RegExp((PATH + "(.*).json"));
         }
-    );
-    return deferred.promise;
+        else {
+            providedTranslationPathPattern = PATH + "*.json";
+            providedTranslationPathRegex = new RegExp((PATH + "(.*).json"));
+        }
+    }
+
+    return new Promise(function (resolve, reject) {
+      glob(providedTranslationPathPattern, function(error, langFiles) {
+        if (error) {
+          reject(error);
+        }
+        langFiles.forEach(function(langFile) {
+          var matches = langFile.match(providedTranslationPathRegex);
+          if (matches) {
+            targetLangArr.push({
+              lang: matches[1],
+              path: path.join(context.opts.projectRoot, langFile)
+            });
+          }
+        });
+        resolve(targetLangArr);
+      });
+    });
 }
 
