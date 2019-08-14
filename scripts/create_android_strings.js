@@ -1,6 +1,6 @@
 var fs = require('fs-extra');
 var _ = require('lodash');
-xml2js = require('xml2js');
+var xml2js = require('xml2js');
 
 function fileExists(path) {
     try {
