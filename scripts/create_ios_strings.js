@@ -1,7 +1,9 @@
 var fs = require('fs-extra');
 var _ = require('lodash');
 var iconv = require('iconv-lite');
-var xmldom = require('xmldom');
+var xmldom = require('xmldom');    
+var path = require('path');
+
 
 var iosProjFolder;
 var iosPbxProjPath;
@@ -149,6 +151,12 @@ module.exports = function(context) {
 
                   fs.writeFileSync(getXcodePbxProjPath(), proj.writeSync());
                   console.log('new pbx project written with localization groups');
+                  
+                  var platformPath   = path.join( context.opts.projectRoot, "platforms", "ios" );
+                  var projectFileApi = require( path.join( platformPath, "/cordova/lib/projectFile.js" ) );
+                  projectFileApi.purgeProjectFileCache( platformPath );
+                  console.log(platformPath + ' purged from project cache');
+                  
                   resolve();
               });
             });
