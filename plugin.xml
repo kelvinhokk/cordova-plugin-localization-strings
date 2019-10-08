@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-        id="cordova-plugin-localization-strings" version="3.2.0">
+        id="cordova-plugin-localization-strings" version="3.2.1">
   <name>Localization</name>
   <description>Cordova Plugin for localizing local strings</description>
   <license>MIT License</license>
