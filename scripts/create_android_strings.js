@@ -43,29 +43,31 @@ module.exports = function (context) {
                     };
                     promisesToRun.push(processResult(context, localeLang, langJson, stringXmlJson));
                 } else {
-                    //lets read from strings.xml into json
-                    fs.readFile(stringXmlFilePath, {encoding: 'utf8'}, function (err, data) {
-                        if (err) {
-                            throw err;
-                        }
-
-                        parser.parseString(data, function (err, result) {
+                    promisesToRun.push(new Promise(function (resolve, reject) {
+                        //lets read from strings.xml into json
+                        fs.readFile(stringXmlFilePath, {encoding: 'utf8'}, function (err, data) {
                             if (err) {
-                                throw err;
+                                return reject(err);
                             }
 
-                            stringXmlJson = result;
+                            parser.parseString(data, function (err, result) {
+                                if (err) {
+                                    return reject(err);
+                                }
 
-                            // initialize xmlJson to have strings
-                            if (!_.has(stringXmlJson, "resources") || !_.has(stringXmlJson.resources, "string")) {
-                                stringXmlJson.resources = {
-                                    "string": []
-                                };
-                            }
+                                stringXmlJson = result;
 
-                            promisesToRun.push(processResult(context, localeLang, langJson, stringXmlJson));
+                                // initialize xmlJson to have strings
+                                if (!_.has(stringXmlJson, "resources") || !_.has(stringXmlJson.resources, "string")) {
+                                    stringXmlJson.resources = {
+                                        "string": []
+                                    };
+                                }
+
+                                processResult(context, localeLang, langJson, stringXmlJson).then(resolve, reject);
+                            });
                         });
-                    });
+                    }));
                 }
             });
         });
