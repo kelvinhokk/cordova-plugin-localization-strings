@@ -138,29 +138,29 @@ module.exports = function(context) {
 
             });
 
-            var proj = xcode.project(getXcodePbxProjPath());
+			// every plugin can change project.pbxproj file,
+			// async operations can be exist with random queue, (promise/callback and etc.)
+			// every part with  xcode.project should be existed only in one task (micro)
 
-            return new Promise(function (resolve, reject) {
-              proj.parse(function (error) {
-                  if (error) {
-                    reject(error);
-                  }
+			var proj = xcode.project(getXcodePbxProjPath());
+			proj.parseSync();
 
-                  writeLocalisationFieldsToXcodeProj(localizableStringsPaths, 'Localizable.strings', proj);
-                  writeLocalisationFieldsToXcodeProj(infoPlistPaths, 'InfoPlist.strings', proj);
+			writeLocalisationFieldsToXcodeProj(localizableStringsPaths, 'Localizable.strings', proj);
+			writeLocalisationFieldsToXcodeProj(infoPlistPaths, 'InfoPlist.strings', proj);
 
-                  fs.writeFileSync(getXcodePbxProjPath(), proj.writeSync());
-                  console.log('new pbx project written with localization groups');
-                  
-                  var platformPath   = path.join( context.opts.projectRoot, "platforms", "ios" );
-                  var projectFileApi = require( path.join( platformPath, "/cordova/lib/projectFile.js" ) );
-                  projectFileApi.purgeProjectFileCache( platformPath );
-                  console.log(platformPath + ' purged from project cache');
-                  
-                  resolve();
-              });
-            });
-        });
+			fs.writeFileSync(getXcodePbxProjPath(), proj.writeSync());
+			console.log('new pbx project written with localization groups');
+
+			var platformPath = path.join(context.opts.projectRoot, 'platforms', 'ios');
+			var projectFileApi = require(path.join(platformPath, '/cordova/lib/projectFile.js'));
+			projectFileApi.purgeProjectFileCache(platformPath);
+			console.log(platformPath + ' purged from project cache');
+
+        })
+		.catch(err => {
+			console.error('localization plugin error: ' + JSON.stringify(err));
+			throw Error(err);
+		});
 };
 
 
