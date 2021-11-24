@@ -83,84 +83,83 @@ function writeLocalisationFieldsToXcodeProj(filePaths, groupname, proj) {
     }
 }
 module.exports = function(context) {
+
+	// every plugin can change project.pbxproj file,
+	// async operations can be exist with random queue, (promise/callback and etc.)
+	// every part with  xcode.project should be existed only in one task (micro)
+
     var xcode = require('xcode');
 
     var localizableStringsPaths = [];
     var infoPlistPaths = [];
 
-    return getTargetLang(context)
-        .then(function(languages) {
+    var languages = getTargetLang(context);
 
-            languages.forEach(function(lang){
+    try {
+		languages.forEach(function(lang){
+			//read the json file
+			var langJson = require(lang.path);
 
-                //read the json file
-                var langJson = require(lang.path);
+			// check the locales to write to
+			var localeLangs = [];
+			if (_.has(langJson, "locale") && _.has(langJson.locale, "ios")) {
+				//iterate the locales to to be iterated.
+				_.forEach(langJson.locale.ios, function(aLocale){
+					localeLangs.push(aLocale);
+				});
+			}
+			else {
+				// use the default lang from the filename, for example "en" in en.json
+				localeLangs.push(lang.lang);
+			}
 
-                // check the locales to write to
-                var localeLangs = [];
-                if (_.has(langJson, "locale") && _.has(langJson.locale, "ios")) {
-                    //iterate the locales to to be iterated.
-                    _.forEach(langJson.locale.ios, function(aLocale){
-                        localeLangs.push(aLocale);
-                    });
-                }
-                else {
-                    // use the default lang from the filename, for example "en" in en.json
-                    localeLangs.push(lang.lang);
-                }
+			_.forEach(localeLangs, function(localeLang){
+				if (_.has(langJson, "config_ios")) {
+					//do processing for appname into plist
+					var plistString = langJson.config_ios;
+					if (!_.isEmpty(plistString)) {
+						writeStringFile(plistString, localeLang, "InfoPlist.strings");
+						infoPlistPaths.push(localeLang + ".lproj/" + "InfoPlist.strings");
+					}
+				}
 
-                _.forEach(localeLangs, function(localeLang){
-                    if (_.has(langJson, "config_ios")) {
-                        //do processing for appname into plist
-                        var plistString = langJson.config_ios;
-                        if (!_.isEmpty(plistString)) {
-                            writeStringFile(plistString, localeLang, "InfoPlist.strings");
-                            infoPlistPaths.push(localeLang + ".lproj/" + "InfoPlist.strings");
-                        }
-                    }
+				//remove APP_NAME and write to Localizable.strings
+				if (_.has(langJson, "app")) {
+					//do processing for appname into plist
+					var localizableStringsJson = langJson.app;
 
-                    //remove APP_NAME and write to Localizable.strings
-                    if (_.has(langJson, "app")) {
-                        //do processing for appname into plist
-                        var localizableStringsJson = langJson.app;
-                        
-                        //ios specific strings
-                        if (_.has(langJson, "app_ios")){
-                            Object.assign(localizableStringsJson, langJson.app_ios);
-                        }
-                        
-                        if (!_.isEmpty(localizableStringsJson)) {
-                            writeStringFile(localizableStringsJson, localeLang, "Localizable.strings");
-                            localizableStringsPaths.push(localeLang + ".lproj/" + "Localizable.strings");
-                        }
-                    }
-                });
+					//ios specific strings
+					if (_.has(langJson, "app_ios")){
+						Object.assign(localizableStringsJson, langJson.app_ios);
+					}
 
-            });
+					if (!_.isEmpty(localizableStringsJson)) {
+						writeStringFile(localizableStringsJson, localeLang, "Localizable.strings");
+						localizableStringsPaths.push(localeLang + ".lproj/" + "Localizable.strings");
+					}
+				}
+			});
 
-			// every plugin can change project.pbxproj file,
-			// async operations can be exist with random queue, (promise/callback and etc.)
-			// every part with  xcode.project should be existed only in one task (micro)
-
-			var proj = xcode.project(getXcodePbxProjPath());
-			proj.parseSync();
-
-			writeLocalisationFieldsToXcodeProj(localizableStringsPaths, 'Localizable.strings', proj);
-			writeLocalisationFieldsToXcodeProj(infoPlistPaths, 'InfoPlist.strings', proj);
-
-			fs.writeFileSync(getXcodePbxProjPath(), proj.writeSync());
-			console.log('new pbx project written with localization groups');
-
-			var platformPath = path.join(context.opts.projectRoot, 'platforms', 'ios');
-			var projectFileApi = require(path.join(platformPath, '/cordova/lib/projectFile.js'));
-			projectFileApi.purgeProjectFileCache(platformPath);
-			console.log(platformPath + ' purged from project cache');
-
-        })
-		.catch(err => {
-			console.error('localization plugin error: ' + JSON.stringify(err));
-			throw Error(err);
 		});
+
+		var proj = xcode.project(getXcodePbxProjPath());
+		proj.parseSync();
+
+		writeLocalisationFieldsToXcodeProj(localizableStringsPaths, 'Localizable.strings', proj);
+		writeLocalisationFieldsToXcodeProj(infoPlistPaths, 'InfoPlist.strings', proj);
+
+		fs.writeFileSync(getXcodePbxProjPath(), proj.writeSync());
+		console.log('new pbx project written with localization groups');
+
+		var platformPath = path.join(context.opts.projectRoot, 'platforms', 'ios');
+		var projectFileApi = require(path.join(platformPath, '/cordova/lib/projectFile.js'));
+		projectFileApi.purgeProjectFileCache(platformPath);
+		console.log(platformPath + ' purged from project cache');
+
+	} catch(err) {
+		console.error('localization plugin error: ' + JSON.stringify(err));
+		throw Error(err);
+	}
 };
 
 
@@ -215,22 +214,17 @@ function getTargetLang(context) {
         }
     }
 
-    return new Promise(function (resolve, reject) {
-      glob(providedTranslationPathPattern, function(error, langFiles) {
-        if (error) {
-          reject(error);
-        }
-        langFiles.forEach(function(langFile) {
-          var matches = langFile.match(providedTranslationPathRegex);
-          if (matches) {
-            targetLangArr.push({
-              lang: matches[1],
-              path: path.join(context.opts.projectRoot, langFile)
-            });
-          }
-        });
-        resolve(targetLangArr);
-      });
-    });
+	var langFiles = glob.sync(providedTranslationPathPattern);
+
+	langFiles.forEach(function(langFile) {
+		var matches = langFile.match(providedTranslationPathRegex);
+		if (matches) {
+			targetLangArr.push({
+				lang: matches[1],
+				path: path.join(context.opts.projectRoot, langFile)
+			});
+		}
+	});
+	return targetLangArr;
 }
 
