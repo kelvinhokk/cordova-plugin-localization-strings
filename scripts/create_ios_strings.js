@@ -1,9 +1,8 @@
 var fs = require('fs-extra');
 var _ = require('lodash');
 var iconv = require('iconv-lite');
-var xmldom = require('@xmldom/xmldom');    
+var xmldom = require('@xmldom/xmldom');
 var path = require('path');
-
 
 var iosProjFolder;
 var iosPbxProjPath;
@@ -82,6 +81,7 @@ function writeLocalisationFieldsToXcodeProj(filePaths, groupname, proj) {
         });
     }
 }
+
 module.exports = function(context) {
     var xcode = require('xcode');
 
@@ -123,12 +123,12 @@ module.exports = function(context) {
                     if (_.has(langJson, "app")) {
                         //do processing for appname into plist
                         var localizableStringsJson = langJson.app;
-                        
+
                         //ios specific strings
                         if (_.has(langJson, "app_ios")){
                             Object.assign(localizableStringsJson, langJson.app_ios);
                         }
-                        
+
                         if (!_.isEmpty(localizableStringsJson)) {
                             writeStringFile(localizableStringsJson, localeLang, "Localizable.strings");
                             localizableStringsPaths.push(localeLang + ".lproj/" + "Localizable.strings");
@@ -151,18 +151,17 @@ module.exports = function(context) {
 
                   fs.writeFileSync(getXcodePbxProjPath(), proj.writeSync());
                   console.log('new pbx project written with localization groups');
-                  
+
                   var platformPath   = path.join( context.opts.projectRoot, "platforms", "ios" );
                   var projectFileApi = require( path.join( platformPath, "/cordova/lib/projectFile.js" ) );
                   projectFileApi.purgeProjectFileCache( platformPath );
                   console.log(platformPath + ' purged from project cache');
-                  
+
                   resolve();
               });
             });
         });
 };
-
 
 function getTranslationPath (config, name) {
     var value = config.match(new RegExp('name="' + name + '" value="(.*?)"', "i"))
@@ -187,7 +186,6 @@ function getDefaultPath(context){
     return defaultTranslationPath;
 }
 
-
 function getTargetLang(context) {
     var targetLangArr = [];
 
@@ -195,7 +193,7 @@ function getTargetLang(context) {
     var glob = require('glob');
     var providedTranslationPathPattern;
     var providedTranslationPathRegex;
-    var config = fs.readFileSync("config.xml").toString();  
+    var config = fs.readFileSync("config.xml").toString();
     var PATH = getTranslationPath(config, "TRANSLATION_PATH");
 
     if(PATH == null){
@@ -214,8 +212,7 @@ function getTargetLang(context) {
             providedTranslationPathRegex = new RegExp((PATH + "(.*).json"));
         }
     }
-
-    return new Promise(function (resolve, reject) {
+    return new Promise(function(resolve, reject) {
       glob(providedTranslationPathPattern, function(error, langFiles) {
         if (error) {
           reject(error);
@@ -233,4 +230,3 @@ function getTargetLang(context) {
       });
     });
 }
-

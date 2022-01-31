@@ -140,7 +140,7 @@ function getTargetLang(context) {
           }
         });
         resolve(targetLangArr);
-      })
+      });
     });
 }
 
