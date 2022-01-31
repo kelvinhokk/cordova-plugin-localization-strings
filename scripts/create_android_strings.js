@@ -20,7 +20,7 @@ module.exports = function (context) {
 
             // check the locales to write to
             var localeLangs = [];
-            if (_.has(langJson, "locale") && _.has(langJson.locale, "android")) {
+            if (_.has(langJson, 'locale') && _.has(langJson.locale, 'android')) {
                 //iterate the locales to to be iterated.
                 _.forEach(langJson.locale.android, function (aLocale) {
                     localeLangs.push(aLocale);
@@ -37,37 +37,39 @@ module.exports = function (context) {
                 var stringXmlJson;
                 if (!fileExists(stringXmlFilePath)) {
                     stringXmlJson = {
-                        "resources": {
-                            "string": []
+                        resources: {
+                            string: []
                         }
                     };
                     promisesToRun.push(processResult(context, localeLang, langJson, stringXmlJson));
                 } else {
-                    promisesToRun.push(new Promise(function (resolve, reject) {
-                        //lets read from strings.xml into json
-                        fs.readFile(stringXmlFilePath, {encoding: 'utf8'}, function (err, data) {
-                            if (err) {
-                                return reject(err);
-                            }
-
-                            parser.parseString(data, function (err, result) {
+                    promisesToRun.push(
+                        new Promise(function (resolve, reject) {
+                            //lets read from strings.xml into json
+                            fs.readFile(stringXmlFilePath, { encoding: 'utf8' }, function (err, data) {
                                 if (err) {
                                     return reject(err);
                                 }
 
-                                stringXmlJson = result;
+                                parser.parseString(data, function (err, result) {
+                                    if (err) {
+                                        return reject(err);
+                                    }
 
-                                // initialize xmlJson to have strings
-                                if (!_.has(stringXmlJson, "resources") || !_.has(stringXmlJson.resources, "string")) {
-                                    stringXmlJson.resources = {
-                                        "string": []
-                                    };
-                                }
+                                    stringXmlJson = result;
 
-                                processResult(context, localeLang, langJson, stringXmlJson).then(resolve, reject);
+                                    // initialize xmlJson to have strings
+                                    if (!_.has(stringXmlJson, 'resources') || !_.has(stringXmlJson.resources, 'string')) {
+                                        stringXmlJson.resources = {
+                                            string: []
+                                        };
+                                    }
+
+                                    processResult(context, localeLang, langJson, stringXmlJson).then(resolve, reject);
+                                });
                             });
-                        });
-                    }));
+                        })
+                    );
                 }
             });
         });
@@ -76,18 +78,17 @@ module.exports = function (context) {
     });
 };
 
-function getTranslationPath (config, name) {
-    var value = config.match(new RegExp('name="' + name + '" value="(.*?)"', "i"))
+function getTranslationPath(config, name) {
+    var value = config.match(new RegExp('name="' + name + '" value="(.*?)"', 'i'));
 
-    if(value && value[1]) {
+    if (value && value[1]) {
         return value[1];
-
     } else {
         return null;
     }
 }
 
-function getDefaultPath(context){
+function getDefaultPath(context) {
     var configNodes = context.opts.plugin.pluginInfo._et._root._children;
     var defaultTranslationPath = '';
 
@@ -106,41 +107,40 @@ function getTargetLang(context) {
     var glob = require('glob');
     var providedTranslationPathPattern;
     var providedTranslationPathRegex;
-    var config = fs.readFileSync("config.xml").toString();
-    var PATH = getTranslationPath(config, "TRANSLATION_PATH");
+    var config = fs.readFileSync('config.xml').toString();
+    var PATH = getTranslationPath(config, 'TRANSLATION_PATH');
 
-    if(PATH == null){
+    if (PATH == null) {
         PATH = getDefaultPath(context);
-        providedTranslationPathPattern = PATH + "*.json";
-        providedTranslationPathRegex = new RegExp((PATH + "(.*).json"));
+        providedTranslationPathPattern = PATH + '*.json';
+        providedTranslationPathRegex = new RegExp(PATH + '(.*).json');
     }
-    if(PATH != null){
-        if(/^\s*$/.test(PATH)){
+    if (PATH != null) {
+        if (/^\s*$/.test(PATH)) {
             providedTranslationPathPattern = getDefaultPath(context);
-            providedTranslationPathPattern = PATH + "*.json";
-            providedTranslationPathRegex = new RegExp((PATH + "(.*).json"));
-        }
-        else {
-            providedTranslationPathPattern = PATH + "*.json";
-            providedTranslationPathRegex = new RegExp((PATH + "(.*).json"));
+            providedTranslationPathPattern = PATH + '*.json';
+            providedTranslationPathRegex = new RegExp(PATH + '(.*).json');
+        } else {
+            providedTranslationPathPattern = PATH + '*.json';
+            providedTranslationPathRegex = new RegExp(PATH + '(.*).json');
         }
     }
-    return new Promise(function(resolve, reject) {
-      glob(providedTranslationPathPattern, function(error, langFiles) {
-        if (error) {
-          reject(error);
-        }
-        langFiles.forEach(function(langFile) {
-          var matches = langFile.match(providedTranslationPathRegex);
-          if (matches) {
-            targetLangArr.push({
-              lang: matches[1],
-              path: path.join(context.opts.projectRoot, langFile)
+    return new Promise(function (resolve, reject) {
+        glob(providedTranslationPathPattern, function (error, langFiles) {
+            if (error) {
+                reject(error);
+            }
+            langFiles.forEach(function (langFile) {
+                var matches = langFile.match(providedTranslationPathRegex);
+                if (matches) {
+                    targetLangArr.push({
+                        lang: matches[1],
+                        path: path.join(context.opts.projectRoot, langFile)
+                    });
+                }
             });
-          }
+            resolve(targetLangArr);
         });
-        resolve(targetLangArr);
-      });
     });
 }
 
@@ -149,7 +149,7 @@ function getLocalizationDir(context, lang) {
 
     var langDir;
     switch (lang) {
-        case "en":
+        case 'en':
             langDir = path.normalize(path.join(getResPath(context), 'values'));
             break;
         default:
@@ -164,7 +164,7 @@ function getLocalStringXmlPath(context, lang) {
 
     var filePath;
     switch (lang) {
-        case "en":
+        case 'en':
             filePath = path.normalize(path.join(getResPath(context), 'values/strings.xml'));
             break;
         default:
@@ -190,8 +190,8 @@ function processResult(context, lang, langJson, stringXmlJson) {
     var mapObj = {};
     // create a map to the actual string
     _.forEach(stringXmlJson.resources.string, function (val) {
-        if (_.has(val, "$") && _.has(val["$"], "name")) {
-            mapObj[val["$"].name] = val;
+        if (_.has(val, '$') && _.has(val['$'], 'name')) {
+            mapObj[val['$'].name] = val;
         }
     });
 
@@ -200,17 +200,17 @@ function processResult(context, lang, langJson, stringXmlJson) {
     //now iterate through langJsonToProcess
     _.forEach(langJsonToProcess, function (val, key) {
         // positional string format is in Mac OS X format.  change to android format
-        val = val.replace(/\$@/gi, "$s");
+        val = val.replace(/\$@/gi, '$s');
         val = val.replace(/\'/gi, "\\'");
 
         if (_.has(mapObj, key)) {
             // mapObj contains key. replace key
-            mapObj[key]["_"] = val;
+            mapObj[key]['_'] = val;
         } else {
             // add by inserting
             stringXmlJson.resources.string.push({
                 _: val,
-                '$': {name: key}
+                $: { name: key }
             });
         }
     });
@@ -219,22 +219,22 @@ function processResult(context, lang, langJson, stringXmlJson) {
     var langDir = getLocalizationDir(context, lang);
     var filePath = getLocalStringXmlPath(context, lang);
 
-    return new Promise(function(resolve, reject) {
-      fs.ensureDir(langDir, function (error) {
-        if (error) {
-          reject(error);
-        }
-
-        fs.writeFile(filePath, buildXML(stringXmlJson), {encoding: 'utf8'}, function (error) {
+    return new Promise(function (resolve, reject) {
+        fs.ensureDir(langDir, function (error) {
             if (error) {
-              reject(error);
+                reject(error);
             }
 
-            console.log('Saved:' + filePath);
-            resolve();
+            fs.writeFile(filePath, buildXML(stringXmlJson), { encoding: 'utf8' }, function (error) {
+                if (error) {
+                    reject(error);
+                }
+
+                console.log('Saved:' + filePath);
+                resolve();
+            });
         });
-      });
-    })
+    });
 
     function buildXML(obj) {
         var builder = new xml2js.Builder();

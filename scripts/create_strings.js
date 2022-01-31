@@ -1,7 +1,7 @@
 var ios_script = require('./create_ios_strings');
 var android_script = require('./create_android_strings');
 
-module.exports = function(context) {
+module.exports = function (context) {
     var platforms = context.opts.platforms;
 
     var promises = [];
