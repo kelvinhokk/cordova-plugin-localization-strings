@@ -1,7 +1,7 @@
 var fs = require('fs-extra');
 var _ = require('lodash');
 var iconv = require('iconv-lite');
-var xmldom = require('xmldom');    
+var xmldom = require('@xmldom/xmldom');    
 var path = require('path');
 
 

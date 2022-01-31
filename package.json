@@ -25,17 +25,16 @@
 		"Localizable.strings"
 	],
 	"dependencies": {
+		"@xmldom/xmldom": "^0.8.0",
 		"fs-extra": "^10.0.0",
+		"glob": "^7.2.0",
 		"iconv-lite": "^0.6.3",
 		"lodash": "^4.17.21",
+		"path": "^0.12.7",
 		"xcode": "^3.0.1",
 		"xml-writer": "^1.7.0",
-		"xml2js": "^0.4.23",
-		"xmldom": "^0.6.0",
-		"path": "^0.12.7",
-		"glob": "^7.2.0"
+		"xml2js": "^0.4.23"
 	},
-	"devDependencies": {},
 	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/kelvinhokk/cordova-plugin-localization-strings.git/issues"
