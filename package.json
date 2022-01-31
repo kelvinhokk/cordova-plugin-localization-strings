@@ -1,43 +1,43 @@
 {
-	"name": "cordova-plugin-localization-strings",
-	"version": "3.2.2",
-	"description": "Cordova Plugin for handling localization strings on InfoPlist.strings and Localizable.strings on iOS, strings.xml on Android",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/kelvinhokk/cordova-plugin-localization-strings.git"
-	},
-	"engines": [
-		{
-			"name": "cordova",
-			"version": ">=6.0.0"
-		}
-	],
-	"keywords": [
-		"ecosystem:cordova",
-		"cordova-android",
-		"cordova-ios",
-		"i18n",
-		"internationalization",
-		"l10n",
-		"localization",
-		"strings.xml",
-		"InfoPlist.strings",
-		"Localizable.strings"
-	],
-	"dependencies": {
-		"@xmldom/xmldom": "^0.8.0",
-		"fs-extra": "^10.0.0",
-		"glob": "^7.2.0",
-		"iconv-lite": "^0.6.3",
-		"lodash": "^4.17.21",
-		"path": "^0.12.7",
-		"xcode": "^3.0.1",
-		"xml-writer": "^1.7.0",
-		"xml2js": "^0.4.23"
-	},
-	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/kelvinhokk/cordova-plugin-localization-strings.git/issues"
-	},
-	"homepage": "https://github.com/kelvinhokk/cordova-plugin-localization-strings.git"
+    "name": "cordova-plugin-localization-strings",
+    "version": "3.2.2",
+    "description": "Cordova Plugin for handling localization strings on InfoPlist.strings and Localizable.strings on iOS, strings.xml on Android",
+    "keywords": [
+        "ecosystem:cordova",
+        "cordova-android",
+        "cordova-ios",
+        "i18n",
+        "internationalization",
+        "l10n",
+        "localization",
+        "strings.xml",
+        "InfoPlist.strings",
+        "Localizable.strings"
+    ],
+    "homepage": "https://github.com/kelvinhokk/cordova-plugin-localization-strings.git",
+    "bugs": {
+        "url": "https://github.com/kelvinhokk/cordova-plugin-localization-strings.git/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/kelvinhokk/cordova-plugin-localization-strings.git"
+    },
+    "license": "MIT",
+    "dependencies": {
+        "@xmldom/xmldom": "^0.8.0",
+        "fs-extra": "^10.0.0",
+        "glob": "^7.2.0",
+        "iconv-lite": "^0.6.3",
+        "lodash": "^4.17.21",
+        "path": "^0.12.7",
+        "xcode": "^3.0.1",
+        "xml-writer": "^1.7.0",
+        "xml2js": "^0.4.23"
+    },
+    "engines": [
+        {
+            "name": "cordova",
+            "version": ">=6.0.0"
+        }
+    ]
 }
