@@ -78,8 +78,8 @@ function writeLocalisationFieldsToXcodeProj(filePaths, groupName, proj) {
 }
 
 module.exports = function (context) {
-    var localizableStringsPaths = [];
     var infoPlistPaths = [];
+    var localizableStringsPaths = [];
 
     return getTargetLang(context).then(function (languages) {
         languages.forEach(function (lang) {
@@ -134,8 +134,8 @@ module.exports = function (context) {
                     reject(error);
                 }
 
-                writeLocalisationFieldsToXcodeProj(localizableStringsPaths, 'Localizable.strings', proj);
                 writeLocalisationFieldsToXcodeProj(infoPlistPaths, 'InfoPlist.strings', proj);
+                writeLocalisationFieldsToXcodeProj(localizableStringsPaths, 'Localizable.strings', proj);
 
                 fs.writeFileSync(getXcodePbxProjPath(), proj.writeSync());
                 console.log('Pbx project written with localization groups', _.map(languages, 'lang'));
