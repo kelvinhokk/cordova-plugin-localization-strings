@@ -53,15 +53,15 @@ function writeStringFile(plistStringJsonObj, lang, fileName) {
     });
 }
 
-function writeLocalisationFieldsToXcodeProj(filePaths, groupname, proj) {
+function writeLocalisationFieldsToXcodeProj(filePaths, groupName, proj) {
     var fileRefSection = proj.pbxFileReferenceSection();
     var fileRefValues = _.values(fileRefSection);
 
     if (filePaths.length > 0) {
-        var groupKey = proj.findPBXVariantGroupKey({ name: groupname });
+        var groupKey = proj.findPBXVariantGroupKey({ name: groupName });
         if (!groupKey) {
             // findPBXVariantGroupKey with name InfoPlist.strings not found. creating new group
-            var localizableStringVarGroup = proj.addLocalizationVariantGroup(groupname);
+            var localizableStringVarGroup = proj.addLocalizationVariantGroup(groupName);
             groupKey = localizableStringVarGroup.fileRef;
         }
 
