@@ -95,7 +95,7 @@ function getDefaultPath(context) {
     var defaultTranslationPath = '';
 
     for (var node in configNodes) {
-        if (configNodes[node].attrib.name == 'TRANSLATION_PATH') {
+        if (configNodes[node].attrib.name === 'TRANSLATION_PATH') {
             defaultTranslationPath = configNodes[node].attrib.default;
         }
     }
@@ -196,7 +196,7 @@ function processResult(context, lang, langJson, stringXmlJson) {
     _.forEach(langJsonToProcess, function (val, key) {
         // positional string format is in Mac OS X format. change to android format
         val = val.replace(/\$@/gi, '$s');
-        val = val.replace(/\'/gi, "\\'");
+        val = val.replace(/'/gi, "\\'");
 
         if (_.has(mapObj, key)) {
             // mapObj contains key. replace key

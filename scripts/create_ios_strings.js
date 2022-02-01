@@ -67,7 +67,7 @@ function writeLocalisationFieldsToXcodeProj(filePaths, groupname, proj) {
 
         filePaths.forEach(function (path) {
             var results = _.find(fileRefValues, function (o) {
-                return _.isObject(o) && _.has(o, 'path') && o.path.replace(/['"]+/g, '') == path;
+                return _.isObject(o) && _.has(o, 'path') && o.path.replace(/['"]+/g, '') === path;
             });
             if (_.isUndefined(results)) {
                 // not found in pbxFileReference yet
@@ -165,7 +165,7 @@ function getDefaultPath(context) {
     var defaultTranslationPath = '';
 
     for (var node in configNodes) {
-        if (configNodes[node].attrib.name == 'TRANSLATION_PATH') {
+        if (configNodes[node].attrib.name === 'TRANSLATION_PATH') {
             defaultTranslationPath = configNodes[node].attrib.default;
         }
     }
