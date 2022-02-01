@@ -137,30 +137,9 @@ function getTargetLang(context) {
     });
 }
 
-function getLocalizationDir(context, lang) {
-    var langDir;
-    switch (lang) {
-        case 'en':
-            langDir = path.normalize(path.join(getResPath(context), 'values'));
-            break;
-        default:
-            langDir = path.normalize(path.join(getResPath(context), 'values-' + lang));
-            break;
-    }
-    return langDir;
-}
-
 function getLocalStringXmlPath(context, lang) {
-    var filePath;
-    switch (lang) {
-        case 'en':
-            filePath = path.normalize(path.join(getResPath(context), 'values/strings.xml'));
-            break;
-        default:
-            filePath = path.normalize(path.join(getResPath(context), 'values-' + lang + '/', 'strings.xml'));
-            break;
-    }
-    return filePath;
+    var resPath = getResPath(context);
+    return path.normalize(path.join(resPath, 'values' + (lang !== 'en' ? '-' + lang : ''), 'strings.xml'));
 }
 
 function getResPath(context) {
@@ -199,8 +178,8 @@ function processResult(context, lang, langJson, stringXmlJson) {
     });
 
     // save to disk
-    var langDir = getLocalizationDir(context, lang);
     var filePath = getLocalStringXmlPath(context, lang);
+    var langDir = path.dirname(filePath);
 
     return new Promise(function (resolve, reject) {
         fs.ensureDir(langDir, function (error) {
