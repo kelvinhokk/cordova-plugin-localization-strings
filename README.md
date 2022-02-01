@@ -123,13 +123,13 @@ zh-Hant.json
 
 ## Dependencies
 
-This plugin relies on node-xcode >= 0.9.0, node >= 5.0.0, cordova >= 6.0.0.
+This plugin relies on node >= 5.0.0, cordova >= 6.0.0.
 
 Do remember to install the other dependencies via the --fetch when installing the plugin.
 
 ## Use Cases
 
-Typically in a Cordova application, localization is performed on the javascript layer. There are several libraries to do help do so like angular-translate on ionic 1 and ngx-translate on ionic 2, with the help of plugins like cordova-plugin-globalization to retrieved the locale or preferred language natively.
+Typically, in a Cordova application, localization is performed on the javascript layer. There are several libraries to help do so like angular-translate on ionic 1 and ngx-translate on ionic 2, with the help of plugins like cordova-plugin-globalization to retrieve the locale or preferred language natively.
 
 This plugin helps in native localization in the following use cases:
 
@@ -169,7 +169,7 @@ Example usage:
 Typically, there are 2 main ways push notifications can be localised:
 
 -   your app saves your user's selected language on the server, and pushes a localised string in the push notification to your user.
--   your server pushes a key to the phone, and the app displays a localised version based on the key in the localization bundle, as determined from the user's phone OS's languauge.
+-   your server pushes a key to the phone, and the app displays a localised version based on the key in the localization bundle, as determined from the user's phone OS's language.
 
 This plugin helps in the latter approach.
 
