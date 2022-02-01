@@ -225,7 +225,7 @@ function processResult(context, lang, langJson, stringXmlJson) {
                     reject(error);
                 }
 
-                console.log('Saved:' + filePath);
+                console.log('Localization saved:', filePath);
                 resolve();
             });
         });
