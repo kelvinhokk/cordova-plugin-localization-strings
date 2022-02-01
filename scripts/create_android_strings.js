@@ -1,4 +1,6 @@
+var path = require('path');
 var fs = require('fs-extra');
+var glob = require('glob');
 var _ = require('lodash');
 var xml2js = require('xml2js');
 
@@ -103,8 +105,6 @@ function getDefaultPath(context) {
 function getTargetLang(context) {
     var targetLangArr = [];
 
-    var path = require('path');
-    var glob = require('glob');
     var providedTranslationPathPattern;
     var providedTranslationPathRegex;
     var config = fs.readFileSync('config.xml').toString();
@@ -145,8 +145,6 @@ function getTargetLang(context) {
 }
 
 function getLocalizationDir(context, lang) {
-    var path = require('path');
-
     var langDir;
     switch (lang) {
         case 'en':
@@ -160,8 +158,6 @@ function getLocalizationDir(context, lang) {
 }
 
 function getLocalStringXmlPath(context, lang) {
-    var path = require('path');
-
     var filePath;
     switch (lang) {
         case 'en':
@@ -175,7 +171,6 @@ function getLocalStringXmlPath(context, lang) {
 }
 
 function getResPath(context) {
-    var path = require('path');
     var locations = context.requireCordovaModule('cordova-lib/src/platforms/platforms').getPlatformApi('android').locations;
 
     if (locations && locations.res) {

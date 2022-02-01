@@ -1,8 +1,10 @@
+var path = require('path');
 var fs = require('fs-extra');
+var glob = require('glob');
 var _ = require('lodash');
 var iconv = require('iconv-lite');
 var xmldom = require('@xmldom/xmldom');
-var path = require('path');
+var xcode = require('xcode');
 
 var iosProjFolder;
 var iosPbxProjPath;
@@ -82,8 +84,6 @@ function writeLocalisationFieldsToXcodeProj(filePaths, groupname, proj) {
 }
 
 module.exports = function (context) {
-    var xcode = require('xcode');
-
     var localizableStringsPaths = [];
     var infoPlistPaths = [];
 
@@ -182,8 +182,6 @@ function getDefaultPath(context) {
 function getTargetLang(context) {
     var targetLangArr = [];
 
-    var path = require('path');
-    var glob = require('glob');
     var providedTranslationPathPattern;
     var providedTranslationPathRegex;
     var config = fs.readFileSync('config.xml').toString();
