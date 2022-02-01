@@ -126,7 +126,8 @@ module.exports = function (context) {
             });
         });
 
-        var proj = xcode.project(getXcodePbxProjPath());
+        var pbxProjPath = getXcodePbxProjPath();
+        var proj = xcode.project(pbxProjPath);
 
         return new Promise(function (resolve, reject) {
             proj.parse(function (error) {
@@ -137,7 +138,7 @@ module.exports = function (context) {
                 writeLocalisationFieldsToXcodeProj(infoPlistPaths, 'InfoPlist.strings', proj);
                 writeLocalisationFieldsToXcodeProj(localizableStringsPaths, 'Localizable.strings', proj);
 
-                fs.writeFileSync(getXcodePbxProjPath(), proj.writeSync());
+                fs.writeFileSync(pbxProjPath, proj.writeSync());
                 console.log('Pbx project written with localization groups', _.map(languages, 'lang'));
 
                 var platformPath = path.join(context.opts.projectRoot, 'platforms', 'ios');
