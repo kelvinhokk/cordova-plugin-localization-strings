@@ -58,10 +58,9 @@ function writeLocalisationFieldsToXcodeProj(filePaths, groupname, proj) {
     var fileRefValues = _.values(fileRefSection);
 
     if (filePaths.length > 0) {
-        // var groupKey;
         var groupKey = proj.findPBXVariantGroupKey({ name: groupname });
         if (!groupKey) {
-            // findPBXVariantGroupKey with name InfoPlist.strings not found.  creating new group
+            // findPBXVariantGroupKey with name InfoPlist.strings not found. creating new group
             var localizableStringVarGroup = proj.addLocalizationVariantGroup(groupname);
             groupKey = localizableStringVarGroup.fileRef;
         }
@@ -71,7 +70,7 @@ function writeLocalisationFieldsToXcodeProj(filePaths, groupname, proj) {
                 return _.isObject(o) && _.has(o, 'path') && o.path.replace(/['"]+/g, '') == path;
             });
             if (_.isUndefined(results)) {
-                //not found in pbxFileReference yet
+                // not found in pbxFileReference yet
                 proj.addResourceFile('Resources/' + path, { variantGroup: true }, groupKey);
             }
         });
@@ -84,13 +83,13 @@ module.exports = function (context) {
 
     return getTargetLang(context).then(function (languages) {
         languages.forEach(function (lang) {
-            //read the json file
+            // read the json file
             var langJson = require(lang.path);
 
             // check the locales to write to
             var localeLangs = [];
             if (_.has(langJson, 'locale') && _.has(langJson.locale, 'ios')) {
-                //iterate the locales to to be iterated.
+                // iterate the locales
                 _.forEach(langJson.locale.ios, function (aLocale) {
                     localeLangs.push(aLocale);
                 });
@@ -101,7 +100,7 @@ module.exports = function (context) {
 
             _.forEach(localeLangs, function (localeLang) {
                 if (_.has(langJson, 'config_ios')) {
-                    //do processing for appname into plist
+                    // do processing for appname into plist
                     var plistString = langJson.config_ios;
                     if (!_.isEmpty(plistString)) {
                         writeStringFile(plistString, localeLang, 'InfoPlist.strings');
@@ -109,12 +108,12 @@ module.exports = function (context) {
                     }
                 }
 
-                //remove APP_NAME and write to Localizable.strings
+                // remove APP_NAME and write to Localizable.strings
                 if (_.has(langJson, 'app')) {
-                    //do processing for appname into plist
+                    // do processing for appname into plist
                     var localizableStringsJson = langJson.app;
 
-                    //ios specific strings
+                    // ios specific strings
                     if (_.has(langJson, 'app_ios')) {
                         Object.assign(localizableStringsJson, langJson.app_ios);
                     }

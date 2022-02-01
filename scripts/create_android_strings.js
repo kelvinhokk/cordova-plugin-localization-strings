@@ -17,13 +17,13 @@ module.exports = function (context) {
         var promisesToRun = [];
 
         languages.forEach(function (lang) {
-            //read the json file
+            // read the json file
             var langJson = require(lang.path);
 
             // check the locales to write to
             var localeLangs = [];
             if (_.has(langJson, 'locale') && _.has(langJson.locale, 'android')) {
-                //iterate the locales to to be iterated.
+                // iterate the locales
                 _.forEach(langJson.locale.android, function (aLocale) {
                     localeLangs.push(aLocale);
                 });
@@ -47,7 +47,7 @@ module.exports = function (context) {
                 } else {
                     promisesToRun.push(
                         new Promise(function (resolve, reject) {
-                            //lets read from strings.xml into json
+                            // lets read from strings.xml into json
                             fs.readFile(stringXmlFilePath, { encoding: 'utf8' }, function (err, data) {
                                 if (err) {
                                     return reject(err);
@@ -180,7 +180,7 @@ function getResPath(context) {
     return path.join(context.opts.projectRoot, 'platforms/android/res');
 }
 
-// process the modified xml and put write to file
+// process the modified xml and write to file
 function processResult(context, lang, langJson, stringXmlJson) {
     var mapObj = {};
     // create a map to the actual string
@@ -192,9 +192,9 @@ function processResult(context, lang, langJson, stringXmlJson) {
 
     var langJsonToProcess = _.assignIn(langJson.config_android, langJson.app, langJson.app_android);
 
-    //now iterate through langJsonToProcess
+    // now iterate through langJsonToProcess
     _.forEach(langJsonToProcess, function (val, key) {
-        // positional string format is in Mac OS X format.  change to android format
+        // positional string format is in Mac OS X format. change to android format
         val = val.replace(/\$@/gi, '$s');
         val = val.replace(/\'/gi, "\\'");
 
@@ -210,7 +210,7 @@ function processResult(context, lang, langJson, stringXmlJson) {
         }
     });
 
-    //save to disk
+    // save to disk
     var langDir = getLocalizationDir(context, lang);
     var filePath = getLocalStringXmlPath(context, lang);
 
