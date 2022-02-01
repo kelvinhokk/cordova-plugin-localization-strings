@@ -9,11 +9,6 @@ var xcode = require('xcode');
 var iosProjFolder;
 var iosPbxProjPath;
 
-var getValue = function (configDoc, name) {
-    var name = configDoc.getElementsByTagName(name)[0];
-    return name.textContent;
-};
-
 function jsonToDotStrings(jsonObj) {
     var returnString = '';
     _.forEach(jsonObj, function (val, key) {
@@ -26,7 +21,7 @@ function initIosDir() {
     if (!iosProjFolder || !iosPbxProjPath) {
         var config = fs.readFileSync('config.xml').toString();
         var configDoc = new xmldom.DOMParser().parseFromString(config, 'application/xml');
-        var name = getValue(configDoc, 'name');
+        var name = configDoc.getElementsByTagName('name')[0].textContent;
 
         iosProjFolder = 'platforms/ios/' + name;
         iosPbxProjPath = 'platforms/ios/' + name + '.xcodeproj/project.pbxproj';
