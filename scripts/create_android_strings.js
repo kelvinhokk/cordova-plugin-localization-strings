@@ -48,7 +48,7 @@ module.exports = function (context) {
                     promisesToRun.push(
                         new Promise(function (resolve, reject) {
                             // lets read from strings.xml into json
-                            fs.readFile(stringXmlFilePath, { encoding: 'utf8' }, function (err, data) {
+                            fs.readFile(stringXmlFilePath, function (err, data) {
                                 if (err) {
                                     return reject(err);
                                 }
@@ -187,7 +187,7 @@ function processResult(context, lang, langJson, stringXmlJson) {
                 reject(error);
             }
 
-            fs.writeFile(filePath, buildXML(stringXmlJson), { encoding: 'utf8' }, function (error) {
+            fs.writeFile(filePath, buildXML(stringXmlJson), function (error) {
                 if (error) {
                     reject(error);
                 }
