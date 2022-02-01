@@ -2,7 +2,6 @@ var path = require('path');
 var fs = require('fs-extra');
 var glob = require('glob');
 var _ = require('lodash');
-var iconv = require('iconv-lite');
 var xmldom = require('@xmldom/xmldom');
 var xcode = require('xcode');
 
@@ -43,12 +42,7 @@ function writeStringFile(plistStringJsonObj, lang, fileName) {
     fs.ensureDir(lProjPath, function (err) {
         if (!err) {
             var stringToWrite = jsonToDotStrings(plistStringJsonObj);
-            var buffer = iconv.encode(stringToWrite, 'utf8');
-
-            fs.open(lProjPath + '/' + fileName, 'w', function (err, fd) {
-                if (err) throw err;
-                fs.writeFileSync(fd, buffer);
-            });
+            fs.writeFileSync(path.join(lProjPath, fileName), stringToWrite);
         }
     });
 }
