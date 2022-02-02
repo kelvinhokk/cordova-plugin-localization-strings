@@ -1,6 +1,7 @@
+var fs = require('fs');
 var path = require('path');
-var fs = require('fs-extra');
 var glob = require('glob');
+var mkdirp = require('mkdirp');
 var _ = require('lodash');
 var xml2js = require('xml2js');
 
@@ -181,21 +182,9 @@ function processResult(context, lang, langJson, stringXmlJson) {
     var filePath = getLocalStringXmlPath(context, lang);
     var langDir = path.dirname(filePath);
 
-    return new Promise(function (resolve, reject) {
-        fs.ensureDir(langDir, function (error) {
-            if (error) {
-                reject(error);
-            }
-
-            fs.writeFile(filePath, buildXML(stringXmlJson), function (error) {
-                if (error) {
-                    reject(error);
-                }
-
-                console.log('Localization saved:', filePath);
-                resolve();
-            });
-        });
+    return mkdirp(langDir).then(function () {
+        fs.writeFileSync(filePath, buildXML(stringXmlJson));
+        console.log('Localization saved:', filePath);
     });
 
     function buildXML(obj) {

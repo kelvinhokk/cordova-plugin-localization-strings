@@ -1,6 +1,7 @@
+var fs = require('fs');
 var path = require('path');
-var fs = require('fs-extra');
 var glob = require('glob');
+var mkdirp = require('mkdirp');
 var _ = require('lodash');
 var xcode = require('xcode');
 
@@ -41,11 +42,9 @@ function getXcodePbxProjPath() {
 
 function writeStringFile(plistStringJsonObj, lang, fileName) {
     var lProjPath = getTargetIosDir() + '/Resources/' + lang + '.lproj';
-    fs.ensureDir(lProjPath, function (err) {
-        if (!err) {
-            var stringToWrite = jsonToDotStrings(plistStringJsonObj);
-            fs.writeFileSync(path.join(lProjPath, fileName), stringToWrite);
-        }
+    mkdirp(lProjPath).then(function () {
+        var stringToWrite = jsonToDotStrings(plistStringJsonObj);
+        fs.writeFileSync(path.join(lProjPath, fileName), stringToWrite);
     });
 }
 
