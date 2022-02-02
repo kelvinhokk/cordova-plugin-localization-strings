@@ -2,7 +2,7 @@ var fs = require('fs');
 var path = require('path');
 var glob = require('glob');
 var mkdirp = require('mkdirp');
-var _ = require('lodash');
+var _ = require('underscore');
 var xcode = require('xcode');
 
 var iosProjFolder;

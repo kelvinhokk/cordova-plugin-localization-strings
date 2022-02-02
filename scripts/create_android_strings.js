@@ -2,7 +2,7 @@ var fs = require('fs');
 var path = require('path');
 var glob = require('glob');
 var mkdirp = require('mkdirp');
-var _ = require('lodash');
+var _ = require('underscore');
 var xml2js = require('xml2js');
 
 function fileExists(path) {
@@ -158,7 +158,7 @@ function processResult(context, lang, langJson, stringXmlJson) {
         }
     });
 
-    var langJsonToProcess = _.assignIn(langJson.config_android, langJson.app, langJson.app_android);
+    var langJsonToProcess = _.extend(langJson.config_android, langJson.app, langJson.app_android);
 
     // now iterate through langJsonToProcess
     _.forEach(langJsonToProcess, function (val, key) {
