@@ -2,7 +2,6 @@ var path = require('path');
 var fs = require('fs-extra');
 var glob = require('glob');
 var _ = require('lodash');
-var xmldom = require('@xmldom/xmldom');
 var xcode = require('xcode');
 
 var iosProjFolder;
@@ -16,14 +15,17 @@ function jsonToDotStrings(jsonObj) {
     return returnString;
 }
 
+function getProjectName() {
+    var config = fs.readFileSync('config.xml').toString();
+    var matches = config.match(new RegExp('<name>(.*?)</name>', 'i'));
+    return (matches && matches[1]) || null;
+}
+
 function initIosDir() {
     if (!iosProjFolder || !iosPbxProjPath) {
-        var config = fs.readFileSync('config.xml').toString();
-        var configDoc = new xmldom.DOMParser().parseFromString(config, 'application/xml');
-        var name = configDoc.getElementsByTagName('name')[0].textContent;
-
-        iosProjFolder = 'platforms/ios/' + name;
-        iosPbxProjPath = 'platforms/ios/' + name + '.xcodeproj/project.pbxproj';
+        var projectName = getProjectName();
+        iosProjFolder = 'platforms/ios/' + projectName;
+        iosPbxProjPath = 'platforms/ios/' + projectName + '.xcodeproj/project.pbxproj';
     }
 }
 
