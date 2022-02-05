@@ -1,6 +1,6 @@
 {
     "name": "cordova-plugin-localization-strings",
-    "version": "4.0.0",
+    "version": "4.0.1",
     "description": "Cordova Plugin for handling localization strings on InfoPlist.strings and Localizable.strings on iOS, strings.xml on Android",
     "keywords": [
         "ecosystem:cordova",
@@ -30,10 +30,7 @@
         "xcode": "^3.0.1",
         "xml2js": "^0.4.23"
     },
-    "engines": [
-        {
-            "name": "cordova",
-            "version": ">=6.0.0"
-        }
-    ]
+    "engines": {
+        "node": ">=10"
+    }
 }
