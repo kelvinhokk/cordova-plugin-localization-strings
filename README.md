@@ -123,7 +123,7 @@ zh-Hant.json
 
 ## Dependencies
 
-This plugin relies on node >= 10 for some of its dependencies, and cordova >= 6.0.0.
+This plugin relies on node >= 10 for some of its dependencies, and cordova >= 6.1.0.
 
 Do remember to install these dependencies too via the `--fetch` when installing the plugin.
 
