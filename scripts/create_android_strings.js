@@ -140,12 +140,19 @@ function getTargetLang(context) {
 
 function getLocalStringXmlPath(context, lang) {
     var resPath = getResPath(context);
-    return path.normalize(path.join(resPath, 'values' + (lang !== 'en' ? '-' + lang : ''), 'strings.xml'));
+    var defaultLocale = getDefaultLocale();
+    return path.normalize(path.join(resPath, 'values' + (lang !== defaultLocale ? '-' + lang : ''), 'strings.xml'));
 }
 
 function getResPath(context) {
     var locations = context.requireCordovaModule('cordova-lib/src/platforms/platforms').getPlatformApi('android').locations;
     return (locations && locations.res) || path.join(context.opts.projectRoot, 'platforms/android/res');
+}
+
+function getDefaultLocale() {
+    var config = fs.readFileSync('config.xml').toString();
+    var matches = config.match(new RegExp('<widget[^>]*?defaultlocale="(.*?)"[\\s\\S]*?>', 'i'));
+    return (matches && matches[1]) || 'en';
 }
 
 // process the modified xml and write to file
