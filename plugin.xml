@@ -7,7 +7,7 @@
   <keywords>cordova,internationalization,localization,i18n,l10n</keywords>
 
   <engines>
-    <engine name="cordova" version=">=6.0.0"/>
+    <engine name="cordova" version=">=6.1.0" />
   </engines>
 
   <preference name="TRANSLATION_PATH" default="translations/app/" />

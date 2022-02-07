@@ -31,6 +31,11 @@
         "xml2js": "^0.4.23"
     },
     "engines": {
+        "cordovaDependencies": {
+            "4.0.0": {
+                "cordova": ">=6.1.0"
+            }
+        },
         "node": ">=10"
     }
 }
