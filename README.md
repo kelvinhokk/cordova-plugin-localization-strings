@@ -213,6 +213,10 @@ The plugin reads the assumed directory structure. It then reads from all the fie
 
 The plugin reads the assumed directory structure. It then combines all properties in `"config_android"` and `"app"` to insert them into the `strings.xml` of the locale's `/res/val-locale/strings.xml`.
 
+Note that for the app's default language the strings are stored in `"/values/strings.xml"` (directory name without `-xx` suffix).
+This plugin considers `'en'` for the default value, matching your `en.json` file if it exists, but to change this you should define your own value through the `defaultlocale` attribute on your [`<widget>`](https://cordova.apache.org/docs/en/latest/config_ref/#widget) in _config.xml_.
+For example `<widget id="" defaultlocale="es">…</widget>`.
+
 ## Overriding platform specific translations:
 
 ```json
