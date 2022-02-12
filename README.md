@@ -6,9 +6,9 @@ This plugin also lets you localize your app name on both iOS and Android.
 
 ## How to Use
 
-Install the plugin by fetching the dependencies
+Install the plugin
 
-    $ cordova plugin add cordova-plugin-localization-strings --save
+    $ cordova plugin add cordova-plugin-localization-strings
 
 Modify your project root to have the following structure:
 
@@ -124,9 +124,7 @@ N.B. The `"locale"` key is optional (if platform localization is not required).
 
 ## Dependencies
 
-This plugin relies on node >= 10 for some of its dependencies, and cordova >= 6.1.0.
-
-Do remember to install these dependencies too via the `--fetch` when installing the plugin.
+This plugin works on cordova >= 6.1.0 and node >= 10.
 
 ## Use Cases
 
