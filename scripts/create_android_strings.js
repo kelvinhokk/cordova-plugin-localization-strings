@@ -165,7 +165,7 @@ function processResult(context, lang, langJson, stringXmlJson) {
         }
     });
 
-    var langJsonToProcess = _.extend(langJson.config_android, langJson.app, langJson.app_android);
+    var langJsonToProcess = _.extend({}, langJson.config_android, langJson.app, langJson.app_android);
 
     // now iterate through langJsonToProcess
     _.forEach(langJsonToProcess, function (val, key) {
