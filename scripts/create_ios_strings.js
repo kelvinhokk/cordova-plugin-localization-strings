@@ -45,8 +45,8 @@ function getXcodePbxProjPath() {
     return iosPbxProjPath;
 }
 
-function writeStringFile(plistStringJsonObj, lang, fileName) {
-    var lProjPath = getTargetIosDir() + '/Resources/' + lang + '.lproj';
+function writeStringFile(plistStringJsonObj, lang, fileName, bundle) {
+    var lProjPath = getTargetIosDir() + "/Resources/" + (bundle ? bundle + "/" : "") + lang + ".lproj";
     mkdirp(lProjPath).then(function () {
         var stringToWrite = jsonToDotStrings(plistStringJsonObj);
         fs.writeFileSync(path.join(lProjPath, fileName), stringToWrite);
@@ -80,6 +80,7 @@ function writeLocalisationFieldsToXcodeProj(filePaths, groupName, proj) {
 module.exports = function (context) {
     var infoPlistPaths = [];
     var localizableStringsPaths = [];
+    var settingsBundlePaths = [];
 
     return getTargetLang(context).then(function (languages) {
         languages.forEach(function (lang) {
@@ -121,6 +122,22 @@ module.exports = function (context) {
                     if (!_.isEmpty(localizableStringsJson)) {
                         writeStringFile(localizableStringsJson, localeLang, 'Localizable.strings');
                         localizableStringsPaths.push(localeLang + '.lproj/' + 'Localizable.strings');
+                    }
+                }
+                    
+                // to create Settings.bundle localizations
+                if (_.has(langJson, "settings_ios")) {
+                    var localizableSettingsJson = langJson.settings_ios;
+                    if (!_.isEmpty(localizableSettingsJson)) {
+                        _.each(localizableSettingsJson, function (value, key) {
+                            var settingsFileName = key + ".strings";
+                            var localizableSettingsStringsRoot = value;
+                            
+                            if (!_.isEmpty(localizableSettingsStringsRoot)) {
+                                writeStringFile(localizableSettingsStringsRoot, localeLang, settingsFileName, "Settings.bundle");
+                                settingsBundlePaths.push("Settings.bundle" + localeLang + ".lproj/" + settingsFileName);
+                            }
+                        });
                     }
                 }
             });

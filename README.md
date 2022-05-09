@@ -163,6 +163,24 @@ Example usage:
 }
 ```
 
+### iOS Settings localizations
+
+This plugin can localizae iOS Settings bundles.
+
+Example usage:
+```json
+{
+    "settings_ios": {
+        "Root": {
+            "App version": "App version"
+        }
+    }
+}
+```
+
+In the example shown, it would create a file such as "platforms/ios/<app name>/Resources/Settings.bundle/<language>.lproj/Root.strings" with
+the expected localizations for that language.
+
 ### Push notifications messages
 
 Typically, there are 2 main ways push notifications can be localized:
