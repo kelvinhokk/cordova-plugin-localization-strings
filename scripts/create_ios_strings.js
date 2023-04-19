@@ -1,7 +1,7 @@
 var fs = require('fs');
 var path = require('path');
-var glob = require('glob');
-var mkdirp = require('mkdirp');
+var glob = require('glob').globSync;
+var mkdirp = require('mkdirp').mkdirp;
 var _ = require('underscore');
 var xcode = require('xcode');
 
@@ -214,20 +214,15 @@ function getTargetLang(context) {
         }
     }
     return new Promise(function (resolve, reject) {
-        glob(providedTranslationPathPattern, function (error, langFiles) {
-            if (error) {
-                reject(error);
-            }
-            langFiles.forEach(function (langFile) {
-                var matches = langFile.match(providedTranslationPathRegex);
-                if (matches) {
-                    targetLangArr.push({
-                        lang: matches[1],
-                        path: path.join(context.opts.projectRoot, langFile)
-                    });
-                }
+        glob(providedTranslationPathPattern).forEach(function (langFile) {
+          var matches = langFile.match(providedTranslationPathRegex);
+          if (matches) {
+            targetLangArr.push({
+              lang: matches[1],
+              path: path.join(context.opts.projectRoot, langFile),
             });
-            resolve(targetLangArr);
+          }
         });
+        resolve(targetLangArr);
     });
 }
