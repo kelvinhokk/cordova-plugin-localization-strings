@@ -81,6 +81,7 @@ module.exports = function (context) {
     var infoPlistPaths = [];
     var localizableStringsPaths = [];
     var settingsBundlePaths = [];
+    var appShortcutsPaths = [];
 
     return getTargetLang(context).then(function (languages) {
         languages.forEach(function (lang) {
@@ -124,6 +125,11 @@ module.exports = function (context) {
                         localizableStringsPaths.push(localeLang + '.lproj/' + 'Localizable.strings');
                     }
                 }
+
+                if (_.has(langJson, 'app_shortcuts') && !_.isEmpty(langJson.app_shortcuts)) {
+                    writeStringFile(langJson.app_shortcuts, localeLang, 'AppShortcuts.strings');
+                    appShortcutsPaths.push(localeLang + '.lproj/' + 'AppShortcuts.strings');
+                }
                     
                 // to create Settings.bundle localizations
                 if (_.has(langJson, "settings_ios")) {
@@ -154,6 +160,7 @@ module.exports = function (context) {
 
                 writeLocalisationFieldsToXcodeProj(infoPlistPaths, 'InfoPlist.strings', proj);
                 writeLocalisationFieldsToXcodeProj(localizableStringsPaths, 'Localizable.strings', proj);
+                writeLocalisationFieldsToXcodeProj(appShortcutsPaths, 'AppShortcuts.strings', proj);
 
                 fs.writeFileSync(pbxProjPath, proj.writeSync());
                 console.log('Pbx project written with localization groups', _.map(languages, 'lang'));

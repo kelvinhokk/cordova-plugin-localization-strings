@@ -165,7 +165,7 @@ Example usage:
 
 ### iOS Settings localizations
 
-This plugin can localizae iOS Settings bundles.
+This plugin can localize iOS Settings bundles.
 
 Example usage:
 ```json
@@ -180,6 +180,23 @@ Example usage:
 
 In the example shown, it would create a file such as "platforms/ios/<app name>/Resources/Settings.bundle/<language>.lproj/Root.strings" with
 the expected localizations for that language.
+
+### iOS Settings localizations
+
+This plugin can localize iOS AppShortcuts used by Shortcuts app and Siri.
+
+Example usage:
+
+```json
+{
+  "app_shortcuts": {
+    "example_shortcut": "Execute example shortcut of ${applicationName}"
+  }
+}
+```
+
+The Key-Value-Pairs are saved as AppShortcuts.strings in the Resources folder.
+Their value is not modified. Therefor all restrictions for app shortcut phrases apply.
 
 ### Push notifications messages
 
