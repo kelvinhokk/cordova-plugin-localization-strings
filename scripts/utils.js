@@ -44,7 +44,7 @@ module.exports = {
 		}
 		return new Promise(function (resolve, reject) {
 			// TODO: reject promise ?
-			glob(providedTranslationPathPattern).forEach(function (langFile) {
+			glob(providedTranslationPathPattern, {posix: true}).forEach(function (langFile) {
 				var matches = langFile.match(providedTranslationPathRegex);
 				if (matches) {
 					targetLangArr.push({
