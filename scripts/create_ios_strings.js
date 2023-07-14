@@ -222,10 +222,14 @@ module.exports = function (context) {
 					"platforms",
 					"ios"
 				);
-				var projectFileApi = require(path.join(
+				var projectFilePath = path.join(
 					platformPath,
 					"/cordova/lib/projectFile.js"
-				));
+				);
+				var projectFileExists = fs.existsSync(projectFilePath);
+
+				// Starting cordova-ios@7.0.0, projectFile.js is not part of the platform folder anymore and has to be grabbed from node_modules
+				var projectFileApi = projectFileExists ? require(projectFilePath) : require("cordova-ios/lib/projectFile");
 				projectFileApi.purgeProjectFileCache(platformPath);
 
 				resolve();
