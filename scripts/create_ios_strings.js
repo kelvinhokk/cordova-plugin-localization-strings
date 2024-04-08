@@ -17,12 +17,22 @@ function jsonToDotStrings(jsonObj) {
 }
 
 function getProjectName() {
-	var config = fs.readFileSync("config.xml").toString();
-	var matches = config.match(new RegExp("<name>(.*?)</name>", "i"));
+	// Valid matches
+	// '<name>Application one</name>',
+  // '<name short="App1">Application one</name>',
+  // '<name xmlns:widget="http://www.w3.org/ns/widgets">Application one</name>',
+	// '<name >Application one</name>',
+  // `<name
+  //  >Application one</name>`,
+	//
+	// Invalid matches
+	// '<name2>Application one</name>',
+  // '<namefoo>Application one</name>',
+  // '<name!!>Application one</name>',
+	const regExpression = "<name(?=[\\s>])[^>]*>(.*?)</name>";
 
-	// if simple name-tag not found then try optional form of name tag with short name
-	if (!matches)
-		matches = config.match(new RegExp('<name short=".*?">(.*?)</name>', "i"));
+	var config = fs.readFileSync("config.xml").toString();
+	var matches = config.match(new RegExp(regExpression, "i"));
 
 	return (matches && matches[1]) || null;
 }
