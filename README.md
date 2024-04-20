@@ -272,3 +272,14 @@ For example `<widget id="" defaultlocale="es">…</widget>`.
 ```
 
 If `"app_ios"` or `"app_android"` are detected, they will be used and override keys from `"app"`.
+
+### Publishing commands:
+
+```bash
+cd cordova-plugin-localization-strings
+git pull
+git tag 5.0.6
+git push --tags --force
+npm version 5.0.6
+npm publish 
+```
