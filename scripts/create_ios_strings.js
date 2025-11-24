@@ -7,6 +7,7 @@ var utils = require("./utils");
 
 var iosProjFolder;
 var iosPbxProjPath;
+var _context;
 
 function jsonToDotStrings(jsonObj) {
 	var returnString = "";
@@ -17,6 +18,14 @@ function jsonToDotStrings(jsonObj) {
 }
 
 function getProjectName() {
+	if(_context.opts.cordova.platforms.indexOf('ios') !== -1){
+		const projectRoot = _context.opts.projectRoot;
+		const platformPath = path.join(projectRoot, 'platforms', 'ios');
+		const cordova_ios = require('cordova-ios');
+		const iosProject = new cordova_ios('ios', platformPath);
+
+		return path.basename(iosProject.locations.xcodeCordovaProj);
+	}
 	// Valid matches
 	// '<name>Application one</name>',
   // '<name short="App1">Application one</name>',
@@ -107,6 +116,8 @@ module.exports = function (context) {
 	var localizableStringsPaths = [];
 	var settingsBundlePaths = [];
 	var appShortcutsPaths = [];
+
+	_context = context;
 
 	return utils.getTargetLang(context).then(function (languages) {
 		languages.forEach(function (lang) {
