@@ -91,18 +91,26 @@ function writeLocalisationFieldsToXcodeProj(filePaths, groupName, proj) {
 			groupKey = localizableStringVarGroup.fileRef;
 		}
 
-		filePaths.forEach(function (path) {
+		filePaths.forEach(function (filePath) {
 			var results = _.find(fileRefValues, function (o) {
 				return (
 					_.isObject(o) &&
 					_.has(o, "path") &&
-					o.path.replace(/['"]+/g, "") === path
+					o.path.replace(/['"]+/g, "") === filePath
 				);
 			});
 			if (_.isUndefined(results)) {
 				// not found in pbxFileReference yet
+
+				// resource path used by cordova-ios 7.x and earlier
+				var resourcePath = "Resources/" + filePath;
+
+				// resource path used by cordova-ios 8.x and later
+				if (fs.existsSync(path.join("platforms", "ios", "App.xcodeproj"))) {
+					resourcePath = "App/Resources/" + filePath;
+				}
 				proj.addResourceFile(
-					"Resources/" + path,
+					resourcePath,
 					{ variantGroup: true },
 					groupKey
 				);
