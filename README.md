@@ -1,6 +1,6 @@
 # Cordova Localization Strings Plugin
 
-This plugin helps you manage string files that you need natively, namely `Localizable.strings` and `InfoPlist.strings` on iOS, and `strings.xml` on Android.
+This plugin helps you manage string files that you need natively, namely `Localizable.strings` and `InfoPlist.strings` on iOS, and `cdv_strings.xml` on Android.
 
 This plugin also lets you localize your app name on both iOS and Android.
 
@@ -43,9 +43,9 @@ A JSON file may look like this (Note: Breaking change from 1.0.0 onwards - new J
 }
 ```
 
-By default, the language for the `Localizable.strings`, `InfoPlist.strings` or `strings.xml` is taken from the filename.
+By default, the language for the `Localizable.strings`, `InfoPlist.strings` or `cdv_strings.xml` is taken from the filename.
 
-For example, if the filename is `es.json`, the language is hence `"es"`, and the plugin will create `"/Resources/es.lproj/Localizable.strings"` or `"/res/values-es/strings.xml"`.
+For example, if the filename is `es.json`, the language is hence `"es"`, and the plugin will create `"/Resources/es.lproj/Localizable.strings"` or `"/res/values-es/cdv_strings.xml"`.
 
 Install iOS or Android platform
 
@@ -230,7 +230,7 @@ The plugin will automatically generate `Localizable.strings` file using the foll
 "HAVE_INVITE_MSG" = "%1$@ has invited you to game room %2$@";
 ```
 
-And on Android, the respective locale's `strings.xml`:
+And on Android, the respective locale's `cdv_strings.xml`:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -246,9 +246,9 @@ The plugin reads the assumed directory structure. It then reads from all the fie
 
 ## Details for Android
 
-The plugin reads the assumed directory structure. It then combines all properties in `"config_android"` and `"app"` to insert them into the `strings.xml` of the locale's `/res/values-<xx>/strings.xml`.
+The plugin reads the assumed directory structure. It then combines all properties in `"config_android"` and `"app"` to insert them into the `cdv_strings.xml` of the locale's `/res/values-<xx>/cdv_strings.xml`.
 
-Note that for the app's default language the strings are stored in `"/res/values/strings.xml"` (directory name without `-<xx>` suffix).
+Note that for the app's default language the strings are stored in `"/res/values/cdv_strings.xml"` (directory name without `-<xx>` suffix).
 This plugin considers `'en'` for the default value, matching your `en.json` file if it exists, but to change this you should define your own value through the `defaultlocale` attribute on your [`<widget>`](https://cordova.apache.org/docs/en/latest/config_ref/#widget) in _config.xml_.
 For example `<widget id="" defaultlocale="es">…</widget>`.
 

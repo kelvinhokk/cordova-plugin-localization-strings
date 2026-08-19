@@ -50,7 +50,7 @@ module.exports = function (context) {
 				} else {
 					promisesToRun.push(
 						new Promise(function (resolve, reject) {
-							// lets read from strings.xml into json
+							// lets read from cdv_strings.xml into json
 							fs.readFile(stringXmlFilePath, function (err, data) {
 								if (err) {
 									return reject(err);
@@ -98,7 +98,7 @@ function getLocalStringXmlPath(context, lang) {
 		path.join(
 			resPath,
 			"values" + (lang !== defaultLocale ? "-" + lang : ""),
-			"strings.xml"
+			"cdv_strings.xml"
 		)
 	);
 }
