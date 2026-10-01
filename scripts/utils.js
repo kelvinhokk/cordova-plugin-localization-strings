@@ -42,14 +42,17 @@ module.exports = {
 				providedTranslationPathRegex = new RegExp(PATH + "(.*).json");
 			}
 		}
+
+		providedTranslationPathPattern = providedTranslationPathPattern.replace(/^\//, '');
+
 		return new Promise(function (resolve, reject) {
 			// TODO: reject promise ?
-			glob(providedTranslationPathPattern, {posix: true}).forEach(function (langFile) {
-				var matches = langFile.match(providedTranslationPathRegex);
+			glob(providedTranslationPathPattern, {withFileTypes: true}).forEach(function (langFile) {
+				var matches = langFile.fullpathPosix().match(providedTranslationPathRegex);
 				if (matches) {
 					targetLangArr.push({
 						lang: matches[1],
-						path: path.join(context.opts.projectRoot, langFile),
+						path: langFile.fullpathPosix(),
 					});
 				}
 			});
